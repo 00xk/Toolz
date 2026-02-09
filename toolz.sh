@@ -23,8 +23,8 @@ Wi.~!X$?!-~    : ?$$$B$Wu("**$RM!
 $R@i.~~ !     :   ~$$$$$B$$en:``
 ?MXT@Wx.~    :     ~"##*$$$$M~
  v4
-  Coded by 4lbH4cker
-  github: https://github.com/4lbH4cker
+  Coded by 00xk
+  github: https://github.com/00xk
 \033[33;4mVersion:\033[0m 4            \033[33;4mCTRL+C:\033[0m exit          \033[33;4mAuthor:\033[0m 4lbH4cker
 
 \e[37m[1]\e[36m Kërkesat & Përditësimi        \e[37m[2]\e[36m Phishing Tool				
