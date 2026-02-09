@@ -16,120 +16,148 @@ clear
 
 # Banner with skull
 banner() {
-    echo -e "${RED}
-    ═══════════════════════════════════════════════════════════
-                        
-                    ${WHITE}.・゜゜・．．・゜゜・．${RED}
-                ${WHITE}　　　　　  ／＼　　 　 ／＼${RED}
-              ${WHITE}　 　　　  ／　　＼　 ／　　＼${RED}
-            ${WHITE}　　　　　 ｜　　　 ●　　　　｜${RED}
-          ${WHITE}　　　　　　｜　　　　　　　　 ｜${RED}
-        ${WHITE}　　　　　　　＼　　╱▔▔▔╲　 ／${RED}
-      ${WHITE}　　　　　　　　 ＼／　　　　＼／${RED}
-    ${WHITE}　　　　　　　　　　　　　　　　　　${RED}
-    
-    ${CYAN}╔════════════════════════════════════════════════════════╗
-    ║                                                        ║
-    ║         ${YELLOW}████████╗ ██████╗  ██████╗ ██╗     ███████╗${CYAN}  ║
-    ║         ${YELLOW}╚══██╔══╝██╔═══██╗██╔═══██╗██║     ╚══███╔╝${CYAN}  ║
-    ║            ${YELLOW}██║   ██║   ██║██║   ██║██║       ███╔╝${CYAN}   ║
-    ║            ${YELLOW}██║   ██║   ██║██║   ██║██║      ███╔╝${CYAN}    ║
-    ║            ${YELLOW}██║   ╚██████╔╝╚██████╔╝███████╗███████╗${CYAN}  ║
-    ║            ${YELLOW}╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝${CYAN}  ║
-    ║                                                        ║
-    ╚════════════════════════════════════════════════════════╝${RESET}
-    
-    ${PURPLE}┌────────────────────────────────────────────────────────┐
-    │  ${WHITE}Version: ${GREEN}1.0.0${PURPLE}        │  ${WHITE}Author: ${GREEN}00xk${PURPLE}               │
-    │  ${WHITE}GitHub: ${CYAN}github.com/00xk/Toolz${PURPLE}                     │
-    └────────────────────────────────────────────────────────┘${RESET}
-    
-    ═══════════════════════════════════════════════════════════
-    "
+    echo -e "${RED}"
+    echo "    ================================================================"
+    echo ""
+    echo -e "                    ${WHITE}.・゜゜・．．・゜゜・．${RED}"
+    echo -e "                ${WHITE}　　　　　  ／＼　　 　 ／＼${RED}"
+    echo -e "              ${WHITE}　 　　　  ／　　＼　 ／　　＼${RED}"
+    echo -e "            ${WHITE}　　　　　 ｜　　　 ●　　　　｜${RED}"
+    echo -e "          ${WHITE}　　　　　　｜　　　　　　　　 ｜${RED}"
+    echo -e "        ${WHITE}　　　　　　　＼　　╱▔▔▔╲　 ／${RED}"
+    echo -e "      ${WHITE}　　　　　　　　 ＼／　　　　＼／${RED}"
+    echo -e "    ${WHITE}　　　　　　　　　　　　　　　　　　${RED}"
+    echo ""
+    echo -e "${CYAN}    +========================================================+"
+    echo -e "    |                                                        |"
+    echo -e "    |       ${YELLOW}████████╗ ██████╗  ██████╗ ██╗     ███████╗${CYAN}  |"
+    echo -e "    |       ${YELLOW}╚══██╔══╝██╔═══██╗██╔═══██╗██║     ╚══███╔╝${CYAN}  |"
+    echo -e "    |          ${YELLOW}██║   ██║   ██║██║   ██║██║       ███╔╝${CYAN}   |"
+    echo -e "    |          ${YELLOW}██║   ██║   ██║██║   ██║██║      ███╔╝${CYAN}    |"
+    echo -e "    |          ${YELLOW}██║   ╚██████╔╝╚██████╔╝███████╗███████╗${CYAN}  |"
+    echo -e "    |          ${YELLOW}╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝${CYAN}  |"
+    echo -e "    |                                                        |"
+    echo -e "    +========================================================+${RESET}"
+    echo ""
+    echo -e "${PURPLE}    +------------------------------------------------------+"
+    echo -e "    |  ${WHITE}Version: ${GREEN}1.0.0${PURPLE}      |  ${WHITE}Author: ${GREEN}00xk${PURPLE}                 |"
+    echo -e "    |  ${WHITE}GitHub: ${CYAN}github.com/00xk/Toolz${PURPLE}                   |"
+    echo -e "    +------------------------------------------------------+${RESET}"
+    echo ""
+    echo "    ================================================================"
 }
 
 # Main menu
 menu() {
-    echo -e "${CYAN}
-    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-    ┃                    ${WHITE}MAIN MENU${CYAN}                          ┃
-    ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${RESET}
-    "
-    echo -e "    ${GREEN}[${WHITE}1${GREEN}]${YELLOW} ➤ ${WHITE}System Information${RESET}"
-    echo -e "    ${GREEN}[${WHITE}2${GREEN}]${YELLOW} ➤ ${WHITE}Network Tools${RESET}"
-    echo -e "    ${GREEN}[${WHITE}3${GREEN}]${YELLOW} ➤ ${WHITE}Update Tool${RESET}"
-    echo -e "    ${GREEN}[${WHITE}4${GREEN}]${YELLOW} ➤ ${WHITE}About${RESET}"
-    echo -e "    ${RED}[${WHITE}0${RED}]${YELLOW} ➤ ${WHITE}Exit${RESET}"
     echo ""
-    echo -ne "    ${CYAN}┌─[${WHITE}Select Option${CYAN}]
-    └──╼ ${GREEN}$ ${RESET}"
+    echo -e "${CYAN}    +======================================================+"
+    echo -e "    |                  ${WHITE}MAIN MENU${CYAN}                        |"
+    echo -e "    +======================================================+${RESET}"
+    echo ""
+    echo -e "    ${GREEN}[${WHITE}1${GREEN}]${YELLOW} ➤  ${WHITE}System Information${RESET}"
+    echo -e "    ${GREEN}[${WHITE}2${GREEN}]${YELLOW} ➤  ${WHITE}Network Tools${RESET}"
+    echo -e "    ${GREEN}[${WHITE}3${GREEN}]${YELLOW} ➤  ${WHITE}Update Tool${RESET}"
+    echo -e "    ${GREEN}[${WHITE}4${GREEN}]${YELLOW} ➤  ${WHITE}About${RESET}"
+    echo -e "    ${RED}[${WHITE}0${RED}]${YELLOW} ➤  ${WHITE}Exit${RESET}"
+    echo ""
+    echo -ne "    ${CYAN}+--[${WHITE}Select Option${CYAN}]"
+    echo -ne "\n    ${CYAN}└──>  ${GREEN}${RESET}"
 }
 
 # System Information
 system_info() {
     clear
-    echo -e "${YELLOW}
-    ╔══════════════════════════════════════════════════════╗
-    ║           SYSTEM INFORMATION                         ║
-    ╚══════════════════════════════════════════════════════╝${RESET}
-    "
-    echo -e "${CYAN}[+] Operating System:${RESET}"
-    uname -a
     echo ""
-    echo -e "${CYAN}[+] Hostname:${RESET}"
-    hostname
+    echo -e "${YELLOW}    +====================================================+"
+    echo -e "    |         SYSTEM INFORMATION                         |"
+    echo -e "    +====================================================+${RESET}"
     echo ""
-    echo -e "${CYAN}[+] Current User:${RESET}"
-    whoami
+    echo -e "${CYAN}    [+] Operating System:${RESET}"
+    echo "        $(uname -a)"
     echo ""
-    echo -e "${CYAN}[+] Date & Time:${RESET}"
-    date
+    echo -e "${CYAN}    [+] Hostname:${RESET}"
+    echo "        $(hostname)"
     echo ""
-    echo -e "${CYAN}[+] Uptime:${RESET}"
-    uptime
+    echo -e "${CYAN}    [+] Current User:${RESET}"
+    echo "        $(whoami)"
     echo ""
-    echo -e "${GREEN}[✓] Information gathered successfully!${RESET}"
+    echo -e "${CYAN}    [+] Date & Time:${RESET}"
+    echo "        $(date)"
     echo ""
-    read -p "Press Enter to continue..."
+    echo -e "${CYAN}    [+] Uptime:${RESET}"
+    echo "        $(uptime -p 2>/dev/null || uptime)"
+    echo ""
+    echo -e "${CYAN}    [+] Disk Usage:${RESET}"
+    df -h / 2>/dev/null | tail -n 1 | awk '{print "        "$1" - Total: "$2" | Used: "$3" | Available: "$4" | Use%: "$5}'
+    echo ""
+    echo -e "${CYAN}    [+] Memory Usage:${RESET}"
+    free -h 2>/dev/null | grep Mem | awk '{print "        Total: "$2" | Used: "$3" | Free: "$4}' || echo "        Memory info not available"
+    echo ""
+    echo -e "${GREEN}    [✓] Information gathered successfully!${RESET}"
+    echo ""
+    echo -ne "${PURPLE}    Press Enter to continue...${RESET}"
+    read
 }
 
 # Network Tools
 network_tools() {
     clear
-    echo -e "${YELLOW}
-    ╔══════════════════════════════════════════════════════╗
-    ║              NETWORK TOOLS                           ║
-    ╚══════════════════════════════════════════════════════╝${RESET}
-    "
-    echo -e "${CYAN}[+] Network Interfaces:${RESET}"
-    ip addr show 2>/dev/null || ifconfig 2>/dev/null || echo "Network tools not available"
     echo ""
-    echo -e "${CYAN}[+] Active Connections:${RESET}"
-    netstat -tuln 2>/dev/null | head -20 || ss -tuln 2>/dev/null | head -20 || echo "Connection info not available"
+    echo -e "${YELLOW}    +====================================================+"
+    echo -e "    |            NETWORK TOOLS                           |"
+    echo -e "    +====================================================+${RESET}"
     echo ""
-    echo -e "${GREEN}[✓] Network information displayed!${RESET}"
+    echo -e "${CYAN}    [+] Network Interfaces:${RESET}"
     echo ""
-    read -p "Press Enter to continue..."
+    if command -v ip &> /dev/null; then
+        ip addr show | grep -E "^[0-9]|inet " | sed 's/^/        /'
+    elif command -v ifconfig &> /dev/null; then
+        ifconfig | grep -E "^[a-z]|inet " | sed 's/^/        /'
+    else
+        echo "        Network tools not available"
+    fi
+    echo ""
+    echo -e "${CYAN}    [+] Default Gateway:${RESET}"
+    if command -v ip &> /dev/null; then
+        ip route | grep default | sed 's/^/        /' || echo "        No gateway found"
+    else
+        route -n | grep "^0.0.0.0" | sed 's/^/        /' 2>/dev/null || echo "        Route info not available"
+    fi
+    echo ""
+    echo -e "${CYAN}    [+] DNS Servers:${RESET}"
+    if [ -f /etc/resolv.conf ]; then
+        grep "nameserver" /etc/resolv.conf | sed 's/^/        /' || echo "        No DNS servers found"
+    else
+        echo "        DNS info not available"
+    fi
+    echo ""
+    echo -e "${GREEN}    [✓] Network information displayed!${RESET}"
+    echo ""
+    echo -ne "${PURPLE}    Press Enter to continue...${RESET}"
+    read
 }
 
 # Update function
 update_tool() {
     clear
-    echo -e "${PURPLE}
-    ╔══════════════════════════════════════════════════════╗
-    ║              UPDATE TOOL                             ║
-    ╚══════════════════════════════════════════════════════╝${RESET}
-    "
-    echo -e "${CYAN}[*] Checking for updates...${RESET}"
+    echo ""
+    echo -e "${PURPLE}    +====================================================+"
+    echo -e "    |            UPDATE TOOL                             |"
+    echo -e "    +====================================================+${RESET}"
+    echo ""
+    echo -e "${CYAN}    [*] Checking for updates...${RESET}"
     echo ""
     
     # Check if git is installed
     if ! command -v git &> /dev/null; then
-        echo -e "${RED}[✗] Git is not installed!${RESET}"
-        echo -e "${YELLOW}[!] Please install git first:${RESET}"
-        echo -e "${WHITE}    sudo apt install git -y${RESET}"
+        echo -e "${RED}    [✗] Git is not installed!${RESET}"
+        echo -e "${YELLOW}    [!] Please install git first:${RESET}"
+        echo -e "${WHITE}        sudo apt install git -y${RESET}"
+        echo -e "${WHITE}        or${RESET}"
+        echo -e "${WHITE}        sudo yum install git -y${RESET}"
         echo ""
-        read -p "Press Enter to continue..."
+        echo -ne "${PURPLE}    Press Enter to continue...${RESET}"
+        read
         return
     fi
     
@@ -137,54 +165,92 @@ update_tool() {
     REPO_URL="https://github.com/00xk/Toolz"
     TOOL_DIR="$HOME/Toolz"
     
-    echo -e "${CYAN}[+] Repository: ${WHITE}$REPO_URL${RESET}"
+    echo -e "${CYAN}    [+] Repository: ${WHITE}$REPO_URL${RESET}"
     echo ""
     
     # Check if directory exists
     if [ -d "$TOOL_DIR" ]; then
-        echo -e "${YELLOW}[*] Tool directory found. Updating...${RESET}"
+        echo -e "${YELLOW}    [*] Tool directory found. Updating...${RESET}"
+        echo ""
         cd "$TOOL_DIR"
-        git pull origin main 2>/dev/null || git pull origin master 2>/dev/null
         
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}[✓] Tool updated successfully!${RESET}"
+        # Fetch updates
+        git fetch origin &>/dev/null
+        LOCAL=$(git rev-parse @)
+        REMOTE=$(git rev-parse @{u} 2>/dev/null)
+        
+        if [ "$LOCAL" = "$REMOTE" ]; then
+            echo -e "${GREEN}    [✓] Already up to date!${RESET}"
         else
-            echo -e "${RED}[✗] Update failed!${RESET}"
+            echo -e "${CYAN}    [*] New updates available. Pulling changes...${RESET}"
+            git pull origin main 2>/dev/null || git pull origin master 2>/dev/null
+            
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}    [✓] Tool updated successfully!${RESET}"
+                echo -e "${CYAN}    [+] Please restart the tool to use new features${RESET}"
+            else
+                echo -e "${RED}    [✗] Update failed!${RESET}"
+                echo -e "${YELLOW}    [!] Try manually: cd $TOOL_DIR && git pull${RESET}"
+            fi
         fi
     else
-        echo -e "${YELLOW}[*] Tool directory not found. Installing...${RESET}"
+        echo -e "${YELLOW}    [*] Tool directory not found. Installing...${RESET}"
+        echo ""
         cd "$HOME"
-        git clone "$REPO_URL"
+        
+        echo -e "${CYAN}    [*] Cloning repository...${RESET}"
+        git clone "$REPO_URL" 2>&1 | sed 's/^/        /'
         
         if [ $? -eq 0 ]; then
-            echo -e "${GREEN}[✓] Tool installed successfully!${RESET}"
-            echo -e "${CYAN}[+] Location: ${WHITE}$TOOL_DIR${RESET}"
+            echo ""
+            echo -e "${GREEN}    [✓] Tool installed successfully!${RESET}"
+            echo -e "${CYAN}    [+] Location: ${WHITE}$TOOL_DIR${RESET}"
+            echo -e "${CYAN}    [+] Run: ${WHITE}cd $TOOL_DIR && bash tool.sh${RESET}"
         else
-            echo -e "${RED}[✗] Installation failed!${RESET}"
+            echo ""
+            echo -e "${RED}    [✗] Installation failed!${RESET}"
+            echo -e "${YELLOW}    [!] Check your internet connection and try again${RESET}"
         fi
     fi
     
     echo ""
-    read -p "Press Enter to continue..."
+    echo -ne "${PURPLE}    Press Enter to continue...${RESET}"
+    read
 }
 
 # About
 about() {
     clear
-    echo -e "${PURPLE}
-    ╔══════════════════════════════════════════════════════╗
-    ║                   ABOUT                              ║
-    ╚══════════════════════════════════════════════════════╝${RESET}
-    "
-    echo -e "${CYAN}[+] Tool Name:${WHITE} Toolz${RESET}"
-    echo -e "${CYAN}[+] Version:${WHITE} 1.0.0${RESET}"
-    echo -e "${CYAN}[+] Author:${WHITE} 00xk${RESET}"
-    echo -e "${CYAN}[+] GitHub:${WHITE} https://github.com/00xk/Toolz${RESET}"
-    echo -e "${CYAN}[+] Description:${WHITE} A colorful multi-purpose system tool${RESET}"
     echo ""
-    echo -e "${YELLOW}[!] For educational and authorized use only!${RESET}"
+    echo -e "${PURPLE}    +====================================================+"
+    echo -e "    |                 ABOUT                              |"
+    echo -e "    +====================================================+${RESET}"
     echo ""
-    read -p "Press Enter to continue..."
+    echo -e "${CYAN}    [+] Tool Name:    ${WHITE}Toolz${RESET}"
+    echo -e "${CYAN}    [+] Version:      ${WHITE}1.0.0${RESET}"
+    echo -e "${CYAN}    [+] Author:       ${WHITE}00xk${RESET}"
+    echo -e "${CYAN}    [+] GitHub:       ${WHITE}https://github.com/00xk/Toolz${RESET}"
+    echo -e "${CYAN}    [+] Description:  ${WHITE}A colorful multi-purpose system tool${RESET}"
+    echo ""
+    echo -e "${YELLOW}    +====================================================+"
+    echo -e "    |              FEATURES                              |"
+    echo -e "    +====================================================+${RESET}"
+    echo ""
+    echo -e "    ${GREEN}✓${WHITE}  System Information Display${RESET}"
+    echo -e "    ${GREEN}✓${WHITE}  Network Tools & Diagnostics${RESET}"
+    echo -e "    ${GREEN}✓${WHITE}  Auto-Update from GitHub${RESET}"
+    echo -e "    ${GREEN}✓${WHITE}  Colorful Interface${RESET}"
+    echo -e "    ${GREEN}✓${WHITE}  Easy to Use${RESET}"
+    echo ""
+    echo -e "${RED}    +====================================================+"
+    echo -e "    |              WARNING                               |"
+    echo -e "    +====================================================+${RESET}"
+    echo ""
+    echo -e "${YELLOW}    [!] For educational and authorized use only!${RESET}"
+    echo -e "${YELLOW}    [!] Always get permission before testing on systems${RESET}"
+    echo ""
+    echo -ne "${PURPLE}    Press Enter to continue...${RESET}"
+    read
 }
 
 # Main loop
@@ -210,17 +276,17 @@ main() {
                 ;;
             0)
                 clear
-                echo -e "${PURPLE}
-    ╔══════════════════════════════════════════════════════╗
-    ║              Thank you for using Toolz!              ║
-    ║                   Goodbye! 👋                        ║
-    ╚══════════════════════════════════════════════════════╝${RESET}
-                "
+                echo ""
+                echo -e "${PURPLE}    +====================================================+"
+                echo -e "    |        Thank you for using Toolz!                  |"
+                echo -e "    |              Goodbye! 👋                           |"
+                echo -e "    +====================================================+${RESET}"
+                echo ""
                 exit 0
                 ;;
             *)
-                echo -e "${RED}
-    [✗] Invalid option! Please select 0-4${RESET}"
+                echo ""
+                echo -e "${RED}    [✗] Invalid option! Please select 0-4${RESET}"
                 sleep 2
                 ;;
         esac
