@@ -2,7 +2,7 @@ clear
 mkdir Tools
 clear 
 echo -e '\033[31;40;1m 
-     :::!~!!!!!:.
+                     :::!~!!!!!:.
                   .xUHWH!! !!?M88WHX:.
                 .X*#M@$!!  !X!M$$$$$$WWx:.
                :!!!!!!?H! :!$!$$$$$$$$$$8X:
@@ -10,36 +10,31 @@ echo -e '\033[31;40;1m
              :!~::!H!<   ~.U$X!?R$$$$$$$$MM!
              ~!~!!!!~~ .:XW$$$U!!?$$$$$$RMM!
                !:~~~ .:!M"T#$$$$WX??#MRRMMM!
-               ~?WuxiW*`   `"#$$$$8!!!!??!!!
+               ~?WuxiW`   `"#$$$$8!!!!??!!!
              :X- M$$$$       `"T#$T~!8$WUXU~
             :%`  ~#$$$m:        ~!~ ?$$$$$$
           :!`.-   ~T$$$$8xx.  .xWW- ~""##*"
-.....   -~~:<` !    ~?T#$$@@W@*?$$      /`
+.....   -~~:` !    ~?T#$$@@W@*?$$      /`
 W$@@M!!! .!~~ !!     .:XUW$W!~ `"~:    :
-#"~~`.:x%`!!  !H:   !WM$$$$Ti.: .!WUn+!`
+#"~`.:x%`!!  !H:   !WM$$$$Ti.: .!WUn+!`
 :::~:!!`:X~ .: ?H.!u "$$$B$$$!W:U!T$$M~
 .~~   :X@!.-~   ?@WTWo("*$$$W$TH$! `
 Wi.~!X$?!-~    : ?$$$B$Wu("**$RM!
 $R@i.~~ !     :   ~$$$$$B$$en:``
 ?MXT@Wx.~    :     ~"##*$$$$M~
- v4
   Coded by 00xk
   github: https://github.com/00xk
 \033[33;4mVersion:\033[0m 4            \033[33;4mCTRL+C:\033[0m exit          \033[33;4mAuthor:\033[0m 4lbH4cker
-
-\e[37m[1]\e[36m Kërkesat & Përditësimi        \e[37m[2]\e[36m Phishing Tool				
+\e[37m[1]\e[36m Requirements & Update         \e[37m[2]\e[36m Phishing Tool				
 \e[37m[3]\e[36m WebCam Hack                   \e[37m[4]\e[36m Subscan			
-\e[37m[5]\e[36m Gmail Bomber		  \e[37m[6]\e[36m DDOS Attack			
-\e[37m[7]\e[36m Si të përdorni ?	          \e[37m[8]\e[36m Çinstaloni programet e shkarkuara		
-\e[37m[9]\e[36m Ip Info	                  \e[37m[10]\e[36m dorks-eye
+\e[37m[5]\e[36m Gmail Bomber		      \e[37m[6]\e[36m DDOS Attack			
+\e[37m[7]\e[36m How to Use?	              \e[37m[8]\e[36m Uninstall Downloaded Programs		
+\e[37m[9]\e[36m IP Info	                      \e[37m[10]\e[36m dorks-eye
 \e[37m[11]\e[36m HackerPro                    \e[37m[12]\e[36m RED_HAWK
 \e[37m[13]\e[36m VirusCrafter                 \e[37m[14]\e[36m Info-Site
-\e[37m[15]\e[36m BadMod	                  \e[37m[16]\e[36m Facebash
+\e[37m[15]\e[36m BadMod	                      \e[37m[16]\e[36m Facebash
 \e[37m[17]\e[36m DARKARMY                     \e[37m[18]\e[36m AUTO-IP-CHANGER
-
 '
-
-
 #Zgjedhja e Opsionit
 
 
