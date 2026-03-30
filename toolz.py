@@ -71,15 +71,39 @@ def phishing():
 # =========================
 def update():
     clear()
-    print(f"{PURPLE}=== Updating Tool ==={RESET}\n")
+    print(f"{PURPLE}=== FORCE UPDATE TOOL ==={RESET}\n")
 
+    home = os.path.expanduser("~")
+    tool_dir = os.path.join(home, "Toolz")
+    repo = "https://github.com/00xk/Toolz.git"
+
+    # Check git
     if os.system("which git > /dev/null") != 0:
-        print(f"{RED}Git not installed!{RESET}")
+        print(f"{RED}Git is not installed!{RESET}")
         input("Press Enter...")
         return
 
-    os.system("git pull")
-    input("\nUpdated. Press Enter...")
+    print(f"{YELLOW}[+] Removing old version...{RESET}")
+    time.sleep(1)
+
+    # Remove old folder
+    if os.path.exists(tool_dir):
+        os.system(f"rm -rf {tool_dir}")
+
+    print(f"{CYAN}[+] Downloading latest version...{RESET}")
+    time.sleep(1)
+
+    # Clone fresh
+    os.system(f"cd {home} && git clone {repo}")
+
+    print(f"{GREEN}[✓] Update completed successfully!{RESET}")
+    print(f"{WHITE}Restarting tool...{RESET}")
+    time.sleep(2)
+
+    # Restart tool
+    os.system(f"cd {tool_dir} && python3 toolz.py")
+
+    exit()
 
 # =========================
 # 📋 MENU
