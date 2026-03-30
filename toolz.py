@@ -33,23 +33,100 @@ def logo():
 # =========================
 # 🕵️ Sherlock Checker
 # =========================
-def sherlock_checker():
-    clear()
-    print(f"{CYAN}=== Sherlock Username Checker ==={RESET}\n")
 
-    username = input("Enter username: ")
+def sherlock_logo():
+    print(f"""{CYAN}
+   ███████╗██╗  ██╗███████╗██████╗ ██╗      ██████╗  ██████╗██╗  ██╗
+   ██╔════╝██║  ██║██╔════╝██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝
+   ███████╗███████║█████╗  ██████╔╝██║     ██║   ██║██║     █████╔╝ 
+   ╚════██║██╔══██║██╔══╝  ██╔══██╗██║     ██║   ██║██║     ██╔═██╗ 
+   ███████║██║  ██║███████╗██║  ██║███████╗╚██████╔╝╚██████╗██║  ██╗
+   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝
 
-    print(f"\n{YELLOW}Searching for '{username}'...{RESET}\n")
+                🕵️ USERNAME OSINT TOOL 🕵️
+{RESET}""")
+
+def install_sherlock():
+    print(f"{YELLOW}[!] Sherlock not found. Installing...{RESET}")
     time.sleep(1)
 
-    # Fake demo results (safe)
-    sites = ["Instagram", "Twitter", "GitHub", "TikTok"]
+    # Try pip install
+    result = os.system("pip install sherlock-project > /dev/null 2>&1")
 
-    for site in sites:
-        print(f"{GREEN}[FOUND]{RESET} {site}: https://{site.lower()}.com/{username}")
-        time.sleep(0.3)
+    if result != 0:
+        result = os.system("pip3 install sherlock-project > /dev/null 2>&1")
 
-    input("\nPress Enter...")
+    if result == 0:
+        print(f"{GREEN}[✓] Sherlock installed successfully!{RESET}")
+    else:
+        print(f"{RED}[✗] Failed to install Sherlock!{RESET}")
+        print(f"{WHITE}Try manually: pip install sherlock-project{RESET}")
+        input("Press Enter...")
+
+def sherlock_checker():
+    # Check if sherlock exists
+    if os.system("which sherlock > /dev/null 2>&1") != 0:
+        install_sherlock()
+
+    while True:
+        clear()
+        sherlock_logo()
+        print(f"""
+{GREEN}[1]{WHITE} Set Username
+{GREEN}[2]{WHITE} Multi Username (from file)
+{GREEN}[3]{WHITE} Back
+""")
+
+        choice = input(">> ")
+
+        # =====================
+        # SINGLE USERNAME
+        # =====================
+        if choice == "1":
+            username = input("\nEnter username: ")
+
+            print(f"\n{CYAN}[+] Running Sherlock...{RESET}\n")
+            time.sleep(1)
+
+            # Run Sherlock
+            os.system(f"sherlock {username}")
+
+            input("\nPress Enter...")
+
+        # =====================
+        # MULTI USERNAME FILE
+        # =====================
+        elif choice == "2":
+            filepath = input("\nEnter file path (usernames list): ")
+
+            if not os.path.exists(filepath):
+                print(f"{RED}File not found!{RESET}")
+                input("Press Enter...")
+                continue
+
+            print(f"\n{CYAN}[+] Running Sherlock on list...{RESET}\n")
+            time.sleep(1)
+
+            # Loop through file
+            with open(filepath, "r") as f:
+                for user in f:
+                    user = user.strip()
+                    if user:
+                        print(f"{YELLOW}Checking: {user}{RESET}")
+                        os.system(f"sherlock {user}")
+                        print("\n" + "-"*40)
+
+            input("\nDone. Press Enter...")
+
+        # =====================
+        # BACK
+        # =====================
+        elif choice == "3":
+            break
+
+        else:
+            print(f"{RED}Invalid option{RESET}")
+            time.sleep(1)
 
 # =========================
 # 🎣 Phishing (SAFE DEMO)
