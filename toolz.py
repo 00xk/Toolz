@@ -7,31 +7,36 @@ import sys
 # ══════════════════════════════════════════
 #  COLOR PALETTE
 # ══════════════════════════════════════════
-RED     = "\033[1;31m"
-GREEN   = "\033[1;32m"
-YELLOW  = "\033[1;33m"
-CYAN    = "\033[1;36m"
-WHITE   = "\033[1;37m"
-PURPLE  = "\033[1;35m"
-BLUE    = "\033[1;34m"
-ORANGE  = "\033[38;5;208m"
-GRAY    = "\033[1;90m"
-RESET   = "\033[0m"
-BOLD    = "\033[1m"
-DIM     = "\033[2m"
+RED    = "\033[1;31m"
+GREEN  = "\033[1;32m"
+YELLOW = "\033[1;33m"
+CYAN   = "\033[1;36m"
+WHITE  = "\033[1;37m"
+PURPLE = "\033[1;35m"
+ORANGE = "\033[38;5;208m"
+GRAY   = "\033[1;90m"
+RESET  = "\033[0m"
+BOLD   = "\033[1m"
+DIM    = "\033[2m"
 
 
 def clear():
     os.system("clear")
 
 
-def typewrite(text, delay=0.018):
-    """Print text character by character for dramatic effect."""
-    for ch in text:
-        sys.stdout.write(ch)
+# ══════════════════════════════════════════
+#  SPINNER
+# ══════════════════════════════════════════
+def spinner(label="Scanning", duration=1.5):
+    frames = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
+    end_t = time.time() + duration
+    i = 0
+    while time.time() < end_t:
+        sys.stdout.write(f"\r  {CYAN}{frames[i % len(frames)]}  {WHITE}{label}...{RESET}")
         sys.stdout.flush()
-        time.sleep(delay)
-    print()
+        time.sleep(0.08)
+        i += 1
+    sys.stdout.write("\r" + " " * 50 + "\r")
 
 
 # ══════════════════════════════════════════
@@ -52,36 +57,83 @@ def logo():
 """)
 
 
-# ══════════════════════════════════════════
-#  SHERLOCK ASCII ART  (side-profile)
-#  Inspired by the deerstalker + pipe icon
-# ══════════════════════════════════════════
+# ══════════════════════════════════════════════════════════
+#  SHERLOCK LOGO — faithful to the uploaded ASCII portrait
+#  Hat  = ORANGE  |  Face/body = YELLOW  |  Pipe = GRAY
+# ══════════════════════════════════════════════════════════
 def sherlock_logo():
-    print(f"""{YELLOW}
-        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-        ░                                ░
-        ░   {ORANGE} __________________________{YELLOW}   ░
-        ░   {ORANGE}/ _______________________ \\{YELLOW}  ░
-        ░   {ORANGE}\\ \\  {CYAN}    ____              {ORANGE}/ /{YELLOW}   ░
-        ░    {ORANGE}\\ \\{CYAN}  .'    `.            {ORANGE}/ /{YELLOW}   ░
-        ░     {ORANGE}`-\\{CYAN} /  .--.  \\         {ORANGE}/-'{YELLOW}    ░
-        ░        {CYAN}|  | .--. |  \\ ___/{RESET}         ░
-        ░        {CYAN}|  |'    `|  |{RESET}              ░
-        ░        {CYAN} \\  \\    /  /{RESET}               ░
-        ░         {CYAN} `--`  '--'   {DIM}){GRAY}≡≡≡≡≡≡≡≡≡{RESET}  ░
-        ░                                ░
-        ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░{RESET}
+    H = ORANGE   # hat
+    F = YELLOW   # face / body
+    P = GRAY     # pipe stem & smoke
+    R = RESET
 
-{PURPLE}  ╔══════════════════════════════════════════╗
-  ║       S H E R L O C K  ·  O S I N T      ║
-  ║      Username Investigation Engine        ║
-  ╚══════════════════════════════════════════╝{RESET}
+    art = f"""
+{H}                 @###########%                         {R}
+{H}             ######################%                   {R}
+{H}          #############################                {R}
+{H}        ##################################             {R}
+{H}      ######################################           {R}
+{H}     #########################################         {R}
+{H}    ###########################################        {R}
+{H}   ##############################################      {R}
+{H}   ###############################################     {R}
+{H}  ##################################################   {R}
+{H} %#####################################################  {R}
+{H} ##########################################################%  {R}
+{H} ######################################%%%######################%  {R}
+{H} #################################%%%%#+*#%%%%%%%%%######%%%%%%%  {R}
+{H} #############################%%%%#*=-:...:-==+*%%%%%%%%%%%%%%   {R}
+{H} ##########################%%%%%*:..............:               {R}
+{H} %#####################%%%%%#***#-...............-              {R}
+{H} %#################%%%%%#******#*:...............:              {R}
+{H} %#############%%%%%##*******#+-:.................:             {R}
+{H} %%###########%%##**********#+........::.....::....:            {R}
+{F}  %############*************#=........=+----=+:.....:-          {R}
+{F}  %##########%#****#**=:-***#+.........:-==-:.........:         {R}
+{F}   ##########%***##-.....+***#-........................:         {R}
+{F}  ##########%#**#*:......+***#+.........................::       {R}
+{F} ##########%%***#=.......-**#*-..........................:-      {R}
+{F}#########%%%****#=........:-:............................::      {R}
+{F}######%%%%#*****#*:....................................:::-      {R}
+{F}##%%%%%%#**********+::................................::::=       {R}
+{F}%%%%%{R}   {F}#***************=:.............................::       {R}
+{P}       ###*****************-............................:-       {R}
+{P}      ########************#=............................::       {R}
+{P}    ##############********#+...........................::+++     {R}
+{P}   ##################*****#+...........................:-#**+*   {R}
+{P}  ######################*##=..........................::*{R} {P}#**+#  {R}
+{P}##########################*-........................:::-  {R}{P}%#***   {R}
+{P}#############################*=:.....................::=    {R}{P}*****{R}  {CYAN}*+++++++++{R}
+{P} %#%%%%###########################*-:...................::     {R}{P}*****{R}  {CYAN}***********{R}
+{P}  %@%@%@%@######################+-:::::.............:-     {R}{P}*****{R}  {CYAN}#*********#{R}
+{P}       @%@%@%@%@%###################*+=-:::::::......::-     {R}{P}*****%{R} {CYAN}#*********#{R}
+{P}            @%@%@%#####################%%%#*-:::::::::::=     {R}{P}*****#{R} {CYAN}#*********#{R}
+{P}                @%@%@%###############%%%%##  -:--:-:      {R}{P}%*****#***********#{R}
+{P}                    @%@%#############%%%##              {R}{P}%*****************#{R}
+{P}                        @%@%#########%%%#%             {R}{P}%#****************#{R}
+{P}                            @%@%#####%%%#%             {R}{P}##**************##{R}
+{P}                                @%@###%%%%#              {R}{P}######******####  {R}
+{P}                                  @%@%###%%%%#               {R}{P}##%##########   {R}
+{P}                                     @%###%%%%%                     {R}
+{P}                                        @%##%@%%#                   {R}
+{P}                                          @%##%@@@%@                {R}
+{P}                                             @%%  @@%               {R}
+{P}                                               @@                   {R}
+"""
 
-{GRAY}  ┌─  Features ────────────────────────────────┐{RESET}
-{GREEN}  │{WHITE}  ✦  Scan usernames across 400+ platforms   {GREEN}│{RESET}
-{GREEN}  │{WHITE}  ✦  Multi-target batch scanning             {GREEN}│{RESET}
-{GREEN}  │{WHITE}  ✦  Fast & silent OSINT reconnaissance      {GREEN}│{RESET}
-{GRAY}  └────────────────────────────────────────────┘{RESET}
+    print(art)
+
+    print(f"""{PURPLE}  ╔══════════════════════════════════════════════════╗
+  ║        S H E R L O C K   O S I N T              ║
+  ║     "When you eliminate the impossible..."       ║
+  ╚══════════════════════════════════════════════════╝{RESET}
+
+{GRAY}  ┌─  Capabilities ─────────────────────────────────────┐{RESET}
+{GREEN}  │{WHITE}   ✦  Scan usernames across 400+ platforms         {GREEN}│{RESET}
+{GREEN}  │{WHITE}   ✦  Multi-target batch scanning                   {GREEN}│{RESET}
+{GREEN}  │{WHITE}   ✦  Export results to file                        {GREEN}│{RESET}
+{GREEN}  │{WHITE}   ✦  Fast & silent OSINT reconnaissance            {GREEN}│{RESET}
+{GRAY}  └────────────────────────────────────────────────────┘{RESET}
 """)
 
 
@@ -89,34 +141,17 @@ def sherlock_logo():
 #  INSTALL SHERLOCK
 # ══════════════════════════════════════════
 def install_sherlock():
-    print(f"\n{YELLOW}  [!] Sherlock not found. Fetching...{RESET}\n")
-    bar = ["▰", "▰▰", "▰▰▰", "▰▰▰▰", "▰▰▰▰▰"]
-    for b in bar:
+    print(f"\n{YELLOW}  [!] Sherlock not found. Installing...{RESET}\n")
+    for b in ["▰", "▰▰", "▰▰▰", "▰▰▰▰", "▰▰▰▰▰"]:
         sys.stdout.write(f"\r  {CYAN}  [{b:<5}]{RESET}")
         sys.stdout.flush()
         time.sleep(0.3)
     print()
-
     if os.system("python3 -m pip install sherlock-project -q") == 0:
         print(f"\n  {GREEN}[✔] Sherlock installed successfully!{RESET}\n")
     else:
         print(f"\n  {RED}[✘] Installation failed. Check your connection.{RESET}\n")
         input("  Press Enter to continue...")
-
-
-# ══════════════════════════════════════════
-#  SPINNER UTILITY
-# ══════════════════════════════════════════
-def spinner(label="Scanning", duration=1.5):
-    frames = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
-    end_time = time.time() + duration
-    i = 0
-    while time.time() < end_time:
-        sys.stdout.write(f"\r  {CYAN}{frames[i % len(frames)]}  {WHITE}{label}...{RESET}")
-        sys.stdout.flush()
-        time.sleep(0.08)
-        i += 1
-    sys.stdout.write("\r" + " " * 40 + "\r")
 
 
 # ══════════════════════════════════════════
@@ -130,59 +165,51 @@ def sherlock_checker():
         clear()
         sherlock_logo()
 
-        print(f"""{GRAY}  ┌─  Select Mode ──────────────────────────┐{RESET}
-  {GREEN}[1]{WHITE}  ➤  Single Username Scan               {GRAY}│{RESET}
-  {GREEN}[2]{WHITE}  ➤  Batch Scan from File               {GRAY}│{RESET}
-  {GREEN}[3]{WHITE}  ➤  Save Results to File               {GRAY}│{RESET}
-  {RED}[0]{WHITE}  ➤  Back to Main Menu                  {GRAY}│{RESET}
-{GRAY}  └─────────────────────────────────────────┘{RESET}
+        print(f"""{GRAY}  ┌─  Select Mode ──────────────────────────────┐{RESET}
+  {GREEN}[1]{WHITE}   ➤  Single Username Scan                 {GRAY}│{RESET}
+  {GREEN}[2]{WHITE}   ➤  Batch Scan from File                 {GRAY}│{RESET}
+  {GREEN}[3]{WHITE}   ➤  Save Results to File                 {GRAY}│{RESET}
+  {RED}[0]{WHITE}   ➤  Back to Main Menu                   {GRAY}│{RESET}
+{GRAY}  └─────────────────────────────────────────────┘{RESET}
 """)
 
-        choice = input(f"  {CYAN}▶{RESET} ")
+        choice = input(f"  {CYAN}▶{RESET} ").strip()
 
-        # ── Single User ──
         if choice == "1":
             username = input(f"\n  {YELLOW}Target username:{RESET} ").strip()
             if not username:
                 continue
             print(f"""
-  {GRAY}┌──────────────────────────────────────┐{RESET}
-  {GRAY}│{CYAN}  [TARGET] {YELLOW}{username:<28}{CYAN}{GRAY}│{RESET}
-  {GRAY}│{WHITE}  [ENGINE] Sherlock v2.x               {GRAY}│{RESET}
-  {GRAY}│{WHITE}  [SITES]  400+ platforms              {GRAY}│{RESET}
-  {GRAY}└──────────────────────────────────────┘{RESET}
+  {GRAY}┌──────────────────────────────────────────┐{RESET}
+  {GRAY}│{CYAN}  [TARGET] {YELLOW}{username:<32}{CYAN}{GRAY}│{RESET}
+  {GRAY}│{WHITE}  [ENGINE] Sherlock OSINT                  {GRAY}│{RESET}
+  {GRAY}│{WHITE}  [SITES]  400+ platforms                  {GRAY}│{RESET}
+  {GRAY}└──────────────────────────────────────────┘{RESET}
 """)
             spinner("Initializing engine", 1.2)
             print(f"  {GREEN}[✔] Launching scan...\n{RESET}")
             os.system(f"sherlock {username}")
-            print(f"\n  {GRAY}──────────────────────────────────────{RESET}")
+            print(f"\n  {GRAY}──────────────────────────────────────────{RESET}")
             input(f"  {DIM}Press Enter to continue...{RESET}")
 
-        # ── Batch Scan ──
         elif choice == "2":
             path = input(f"\n  {YELLOW}File path:{RESET} ").strip()
-
             if not os.path.exists(path):
                 print(f"\n  {RED}[✘] File not found: {path}{RESET}")
                 input(f"  {DIM}Press Enter...{RESET}")
                 continue
-
             with open(path, "r") as f:
                 users = [u.strip() for u in f if u.strip()]
-
-            print(f"\n  {CYAN}[+] Found {len(users)} target(s){RESET}\n")
+            print(f"\n  {CYAN}[+] Loaded {len(users)} target(s){RESET}\n")
             time.sleep(0.8)
-
             for i, user in enumerate(users, 1):
-                print(f"  {PURPLE}┌──[ Target {i}/{len(users)} ]{'─'*22}┐{RESET}")
+                print(f"  {PURPLE}┌──[ Target {i}/{len(users)} ]{'─'*24}┐{RESET}")
                 print(f"  {PURPLE}│{RESET}  {CYAN}Username:{RESET} {YELLOW}{user}{RESET}")
-                print(f"  {PURPLE}└{'─'*35}┘{RESET}\n")
+                print(f"  {PURPLE}└{'─'*37}┘{RESET}\n")
                 os.system(f"sherlock {user}")
                 print()
+            input(f"\n  {GREEN}[✔] Batch complete. Press Enter...{RESET}")
 
-            input(f"\n  {GREEN}[✔] Batch scan complete. Press Enter...{RESET}")
-
-        # ── Save to file ──
         elif choice == "3":
             username = input(f"\n  {YELLOW}Target username:{RESET} ").strip()
             if not username:
@@ -190,44 +217,41 @@ def sherlock_checker():
             outfile = f"{username}_results.txt"
             spinner("Scanning & saving", 1.5)
             os.system(f"sherlock {username} --output {outfile}")
-            print(f"\n  {GREEN}[✔] Results saved to: {CYAN}{outfile}{RESET}")
+            print(f"\n  {GREEN}[✔] Results saved to:{RESET} {CYAN}{outfile}{RESET}")
             input(f"  {DIM}Press Enter...{RESET}")
 
         elif choice == "0":
             break
-
         else:
             print(f"\n  {RED}[✘] Invalid option{RESET}")
             time.sleep(1)
 
 
 # ══════════════════════════════════════════
-#  PHISHING MODULE (Educational Demo)
+#  PHISHING MODULE
 # ══════════════════════════════════════════
 def phishing():
     clear()
     print(f"""
-  {RED}╔══════════════════════════════════════════╗
-  ║         PHISHING AWARENESS MODULE         ║
-  ╚══════════════════════════════════════════╝{RESET}
+  {RED}╔══════════════════════════════════════════════╗
+  ║          PHISHING AWARENESS MODULE            ║
+  ╚══════════════════════════════════════════════╝{RESET}
 
-  {YELLOW}[!] This module is for EDUCATIONAL use only.{RESET}
-  {WHITE}    Understanding phishing helps you defend
-      against it.{RESET}
+  {YELLOW}[!] For EDUCATIONAL purposes only.{RESET}
+  {WHITE}    Understanding attacks helps you defend against them.{RESET}
 
-  {GRAY}┌─  How Phishing Works ─────────────────────┐{RESET}
-  {WHITE}│  1. Attacker crafts a fake login page     {GRAY}│{RESET}
-  {WHITE}│  2. Victim receives a convincing link     {GRAY}│{RESET}
-  {WHITE}│  3. Credentials entered → captured        {GRAY}│{RESET}
-  {WHITE}│  4. Attacker gains unauthorized access    {GRAY}│{RESET}
-  {GRAY}└───────────────────────────────────────────┘{RESET}
+  {GRAY}┌─  How Phishing Works ──────────────────────────┐{RESET}
+  {WHITE}│  1. Attacker crafts a convincing fake page     {GRAY}│{RESET}
+  {WHITE}│  2. Victim receives bait link via email/SMS    {GRAY}│{RESET}
+  {WHITE}│  3. Credentials entered → silently captured   {GRAY}│{RESET}
+  {WHITE}│  4. Attacker gains full unauthorized access   {GRAY}│{RESET}
+  {GRAY}└────────────────────────────────────────────────┘{RESET}
 
   {GREEN}[Defense Tips]{RESET}
-  {WHITE}  ✦ Always verify the URL in your browser
-  ✦ Enable 2FA on all important accounts
-  ✦ Use a password manager
-  ✦ Be suspicious of urgency-based emails{RESET}
-
+  {WHITE}  ✦  Always inspect the URL before logging in
+  ✦  Enable 2FA on every important account
+  ✦  Use a reputable password manager
+  ✦  Never click links from unknown senders{RESET}
 """)
     input(f"  {DIM}Press Enter to return...{RESET}")
 
@@ -238,24 +262,24 @@ def phishing():
 def update():
     clear()
     print(f"""
-  {PURPLE}╔══════════════════════════════════════════╗
-  ║            FORCE UPDATE                   ║
-  ╚══════════════════════════════════════════╝{RESET}
+  {PURPLE}╔══════════════════════════════════════════════╗
+  ║               FORCE UPDATE                   ║
+  ╚══════════════════════════════════════════════╝{RESET}
 """)
-
     home     = os.path.expanduser("~")
     tool_dir = os.path.join(home, "Toolz")
 
     steps = [
-        (f"{YELLOW}  [1/3] Removing old version...{RESET}", lambda: os.system(f"rm -rf {tool_dir}") if os.path.exists(tool_dir) else None),
-        (f"{CYAN}  [2/3] Cloning latest release...{RESET}", lambda: os.system(f"cd {home} && git clone https://github.com/00xk/Toolz.git -q")),
-        (f"{GREEN}  [3/3] Restarting tool...{RESET}", lambda: None),
+        (f"  {YELLOW}[1/3] Removing old version...{RESET}",
+         lambda: os.system(f"rm -rf {tool_dir}") if os.path.exists(tool_dir) else None),
+        (f"  {CYAN}[2/3] Cloning latest release...{RESET}",
+         lambda: os.system(f"cd {home} && git clone https://github.com/00xk/Toolz.git -q")),
+        (f"  {GREEN}[3/3] Restarting...{RESET}", lambda: None),
     ]
-
     for msg, action in steps:
         print(msg)
         action()
-        time.sleep(0.8)
+        time.sleep(0.9)
 
     print(f"\n  {GREEN}[✔] Updated successfully!{RESET}\n")
     time.sleep(1.5)
@@ -267,14 +291,14 @@ def update():
 #  MAIN MENU
 # ══════════════════════════════════════════
 def menu():
-    print(f"""{GRAY}  ╔═══════════════════════════════════════════╗
-  ║              M A I N  M E N U             ║
-  ╚═══════════════════════════════════════════╝{RESET}
+    print(f"""{GRAY}  ╔═══════════════════════════════════════════════╗
+  ║             M A I N   M E N U               ║
+  ╚═══════════════════════════════════════════════╝{RESET}
 
-  {GREEN}[1]{WHITE}  🔍  Sherlock OSINT Checker
-  {GREEN}[2]{WHITE}  🎣  Phishing Awareness (Demo)
-  {GREEN}[3]{WHITE}  🔄  Update Tool
-  {RED}[0]{WHITE}  ✖   Exit
+  {GREEN}[1]{WHITE}   🔍  Sherlock OSINT Checker
+  {GREEN}[2]{WHITE}   🎣  Phishing Awareness (Demo)
+  {GREEN}[3]{WHITE}   🔄  Update Tool
+  {RED}[0]{WHITE}   ✖   Exit
 {RESET}""")
 
 
@@ -287,7 +311,7 @@ def main():
         logo()
         menu()
 
-        choice = input(f"  {CYAN}▶{RESET} ")
+        choice = input(f"  {CYAN}▶{RESET} ").strip()
 
         if choice == "1":
             sherlock_checker()
