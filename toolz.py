@@ -33,17 +33,23 @@ def logo():
 # =========================
 # 🕵️ Sherlock Checker
 # =========================
-
+def show_sherlock_image():
+    # Try to open image (Linux)
+    if os.path.exists("sherlock.png"):
+        os.system("xdg-open sherlock.png > /dev/null 2>&1 &")
 def sherlock_logo():
     print(f"""{CYAN}
-   ███████╗██╗  ██╗███████╗██████╗ ██╗      ██████╗  ██████╗██╗  ██╗
-   ██╔════╝██║  ██║██╔════╝██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝
-   ███████╗███████║█████╗  ██████╔╝██║     ██║   ██║██║     █████╔╝ 
-   ╚════██║██╔══██║██╔══╝  ██╔══██╗██║     ██║   ██║██║     ██╔═██╗ 
-   ███████║██║  ██║███████╗██║  ██║███████╗╚██████╔╝╚██████╗██║  ██╗
-   ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝
+        ▄███████▄  ██░ ██ ▓█████  ██▀███   ██▓     ▒█████   ▄████▄   ██ ▄█▀
+       ▓██░  ██▒ ▓██░ ██▒▓█   ▀ ▓██ ▒ ██▒▓██▒    ▒██▒  ██▒▒██▀ ▀█   ██▄█▒ 
+       ▓██░ ██▓▒ ▒██▀▀██░▒███   ▓██ ░▄█ ▒▒██░    ▒██░  ██▒▒▓█    ▄ ▓███▄░ 
+       ▒██▄█▓▒ ▒ ░▓█ ░██ ▒▓█  ▄ ▒██▀▀█▄  ▒██░    ▒██   ██░▒▓▓▄ ▄██▒▓██ █▄ 
+       ▒██▒ ░  ░ ░▓█▒░██▓░▒████▒░██▓ ▒██▒░██████▒░ ████▓▒░▒ ▓███▀ ░▒██▒ █▄
+       ▒▓▒░ ░  ░  ▒ ░░▒░▒░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░▓  ░░ ▒░▒░▒░ ░ ░▒ ▒  ░▒ ▒▒ ▓▒
+       ░▒ ░       ▒ ░▒░ ░ ░ ░  ░  ░▒ ░ ▒░░ ░ ▒  ░  ░ ▒ ▒░   ░  ▒   ░ ░▒ ▒░
+       ░░         ░  ░░ ░   ░     ░░   ░   ░ ░   ░ ░ ░ ▒  ░        ░ ░░ ░ 
+                  ░  ░  ░   ░  ░   ░         ░  ░    ░ ░  ░ ░      ░  ░   
 
-                🕵️ USERNAME OSINT TOOL 🕵️
+                🕵️ SHERLOCK USERNAME FINDER 🕵️
 {RESET}""")
 
 def install_sherlock():
@@ -64,9 +70,13 @@ def install_sherlock():
         input("Press Enter...")
 
 def sherlock_checker():
-    # Check if sherlock exists
-    if os.system("which sherlock > /dev/null 2>&1") != 0:
+    # Auto install check
+    import shutil
+    if shutil.which("sherlock") is None:
         install_sherlock()
+
+    # Show image logo
+    show_sherlock_image()
 
     while True:
         clear()
