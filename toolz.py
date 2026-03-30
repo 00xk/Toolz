@@ -751,10 +751,10 @@ def main():
             ip_tracer()
         elif choice == "3":
             phone_tracer()
-       elif choice == "4":
-    sms_sender()
-elif choice == "5":
-    update()
+        elif choice == "4":
+            sms_sender()
+        elif choice == "5":
+            update()
         elif choice == "0":
             clear()
             print(f"\n  {CYAN}Stay curious. Stay ethical.{RESET}  {DIM}Goodbye 👋{RESET}\n")
