@@ -3,7 +3,7 @@ import os
 import time
 import shutil
 import sys
-import subprocess
+import re
 
 # ══════════════════════════════════════════
 #  COLOR PALETTE
@@ -18,10 +18,11 @@ ORANGE  = "\033[38;5;208m"
 GRAY    = "\033[1;90m"
 LBLUE   = "\033[38;5;39m"
 LGREEN  = "\033[38;5;82m"
+PINK    = "\033[38;5;213m"
+GOLD    = "\033[38;5;220m"
 RESET   = "\033[0m"
 BOLD    = "\033[1m"
 DIM     = "\033[2m"
-BLINK   = "\033[5m"
 
 
 def clear():
@@ -40,7 +41,7 @@ def spinner(label="Processing", duration=1.5, color=CYAN):
         sys.stdout.flush()
         time.sleep(0.08)
         i += 1
-    sys.stdout.write("\r" + " " * 55 + "\r")
+    sys.stdout.write("\r" + " " * 60 + "\r")
 
 
 # ══════════════════════════════════════════
@@ -60,6 +61,13 @@ def progress_bar(label="Loading", duration=1.5, color=CYAN):
 
 
 # ══════════════════════════════════════════
+#  DIVIDER
+# ══════════════════════════════════════════
+def divider(color=GRAY, char="─", width=52):
+    print(f"  {color}{char * width}{RESET}")
+
+
+# ══════════════════════════════════════════
 #  MAIN BANNER
 # ══════════════════════════════════════════
 def logo():
@@ -73,13 +81,12 @@ def logo():
 {GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
 {ORANGE}       ☠   A D V A N C E D   T O O L K I T   ☠{RESET}
 {GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
-{DIM}       github.com/00xk/Toolz   │   v3.0   │   Linux & Termux{RESET}
+{DIM}       github.com/00xk/Toolz   │   v4.0   │   Linux & Termux{RESET}
 """)
 
 
 # ══════════════════════════════════════════════════════════
-#  SHERLOCK LOGO — compact portrait
-#  Hat = ORANGE │ Face = YELLOW │ Pipe = GRAY + CYAN
+#  SHERLOCK LOGO
 # ══════════════════════════════════════════════════════════
 def sherlock_logo():
     H = ORANGE
@@ -87,7 +94,6 @@ def sherlock_logo():
     P = GRAY
     A = CYAN
     R = RESET
-
     print(f"""
 {H}                      %#######                           {R}
 {H}                  #################                      {R}
@@ -122,12 +128,11 @@ def sherlock_logo():
 {P}                                  @%%@@%                   {R}
 {P}                                    @@                     {R}
 """)
-
     print(f"""{PURPLE}  ╔══════════════════════════════════════════════════════╗
   ║          S H E R L O C K   O S I N T              ║
   ║       "When you eliminate the impossible..."       ║
   ╚══════════════════════════════════════════════════════╝{RESET}
-{GRAY}  ┌─  Engine Info ──────────────────────────────────────────┐{RESET}
+{GRAY}  ┌─  Engine ───────────────────────────────────────────────┐{RESET}
 {GREEN}  │{WHITE}   ✦  400+ platforms scanned simultaneously          {GREEN}│{RESET}
 {GREEN}  │{WHITE}   ✦  Multi-target batch mode supported              {GREEN}│{RESET}
 {GREEN}  │{WHITE}   ✦  Export results to .txt file                    {GREEN}│{RESET}
@@ -140,29 +145,56 @@ def sherlock_logo():
 # ══════════════════════════════════════════
 def ip_tracer_logo():
     print(f"""
-{LBLUE}   ██╗██████╗     ████████╗██████╗  █████╗  ██████╗███████╗██████╗
-   ██║██╔══██╗    ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
-   ██║██████╔╝       ██║   ██████╔╝███████║██║     █████╗  ██████╔╝
-   ██║██╔═══╝        ██║   ██╔══██╗██╔══██║██║     ██╔══╝  ██╔══██╗
-   ██║██║            ██║   ██║  ██║██║  ██║╚██████╗███████╗██║  ██║
-   ╚═╝╚═╝            ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝{RESET}
-
+{LBLUE}  ██╗██████╗     ████████╗██████╗  █████╗  ██████╗███████╗██████╗
+  ██║██╔══██╗    ╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
+  ██║██████╔╝       ██║   ██████╔╝███████║██║     █████╗  ██████╔╝
+  ██║██╔═══╝        ██║   ██╔══██╗██╔══██║██║     ██╔══╝  ██╔══██╗
+  ██║██║            ██║   ██║  ██║██║  ██║╚██████╗███████╗██║  ██║
+  ╚═╝╚═╝            ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝{RESET}
 {GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
 {LBLUE}              🌐  IP GEOLOCATION & TRACE ENGINE{RESET}
 {GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
-
-{GRAY}  ┌─  What It Reveals ──────────────────────────────────────────┐{RESET}
+{GRAY}  ┌─  Reveals ──────────────────────────────────────────────┐{RESET}
 {LGREEN}  │{WHITE}   ✦  Country, Region, City & ZIP                     {LGREEN}│{RESET}
-{LGREEN}  │{WHITE}   ✦  ISP / Organization name                         {LGREEN}│{RESET}
+{LGREEN}  │{WHITE}   ✦  ISP / Organization & AS Number                  {LGREEN}│{RESET}
 {LGREEN}  │{WHITE}   ✦  Latitude & Longitude coordinates                {LGREEN}│{RESET}
 {LGREEN}  │{WHITE}   ✦  Timezone & Currency info                        {LGREEN}│{RESET}
-{LGREEN}  │{WHITE}   ✦  AS Number & reverse lookup                      {LGREEN}│{RESET}
 {GRAY}  └──────────────────────────────────────────────────────────┘{RESET}
 """)
 
 
 # ══════════════════════════════════════════
-#  INSTALL SHERLOCK
+#  PHONE TRACER LOGO
+# ══════════════════════════════════════════
+def phone_logo():
+    print(f"""
+{PINK}  ██████╗ ██╗  ██╗ ██████╗ ███╗   ██╗███████╗
+  ██╔══██╗██║  ██║██╔═══██╗████╗  ██║██╔════╝
+  ██████╔╝███████║██║   ██║██╔██╗ ██║█████╗  
+  ██╔═══╝ ██╔══██║██║   ██║██║╚██╗██║██╔══╝  
+  ██║     ██║  ██║╚██████╔╝██║ ╚████║███████╗
+  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝{RESET}
+{PINK}  ██████╗  ██████╗ ██╗███╗   ██╗████████╗
+  ██╔══██╗██╔═══██╗██║████╗  ██║╚══██╔══╝
+  ██████╔╝██║   ██║██║██╔██╗ ██║   ██║   
+  ██╔═══╝ ██║   ██║██║██║╚██╗██║   ██║   
+  ██║     ╚██████╔╝██║██║ ╚████║   ██║   
+  ╚═╝      ╚═════╝ ╚═╝╚═╝  ╚═══╝   ╚═╝  {RESET}
+{GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
+{PINK}         📱  MOBILE NUMBER OSINT ENGINE{RESET}
+{GRAY}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}
+{GRAY}  ┌─  What It Reveals ──────────────────────────────────┐{RESET}
+{PINK}  │{WHITE}   ✦  Country, Region & Local format              {PINK}│{RESET}
+{PINK}  │{WHITE}   ✦  Carrier / Network operator                  {PINK}│{RESET}
+{PINK}  │{WHITE}   ✦  Line type  (mobile / landline / VoIP)       {PINK}│{RESET}
+{PINK}  │{WHITE}   ✦  Number validity & international format       {PINK}│{RESET}
+{PINK}  │{WHITE}   ✦  Deep scan via PhoneInfoga engine            {PINK}│{RESET}
+{GRAY}  └──────────────────────────────────────────────────────┘{RESET}
+""")
+
+
+# ══════════════════════════════════════════
+#  INSTALL HELPERS
 # ══════════════════════════════════════════
 def install_sherlock():
     print(f"\n{YELLOW}  [!] Sherlock not found. Installing...{RESET}\n")
@@ -174,42 +206,141 @@ def install_sherlock():
         input(f"  {DIM}Press Enter to continue...{RESET}")
 
 
-# ══════════════════════════════════════════
-#  INSTALL IP-TRACER
-# ══════════════════════════════════════════
 def install_ip_tracer():
     print(f"\n{YELLOW}  [!] IP-Tracer not found. Installing...{RESET}\n")
     home = os.path.expanduser("~")
     tracer_dir = os.path.join(home, "IP-Tracer")
-
     steps = [
-        (f"  {CYAN}[1/3] Cloning IP-Tracer repository...{RESET}",
+        (f"  {CYAN}[1/3] Cloning IP-Tracer...{RESET}",
          f"git clone https://github.com/rajkumardusad/IP-Tracer.git {tracer_dir} -q"),
         (f"  {CYAN}[2/3] Setting permissions...{RESET}",
          f"chmod +x {tracer_dir}/install"),
         (f"  {CYAN}[3/3] Running installer...{RESET}",
          f"cd {tracer_dir} && sh install"),
     ]
-
     for msg, cmd in steps:
         print(msg)
-        ret = os.system(cmd)
+        os.system(cmd)
         time.sleep(0.5)
-        if ret != 0:
-            print(f"\n  {RED}[✘] Step failed. You may need to run manually:{RESET}")
-            print(f"  {DIM}{cmd}{RESET}\n")
-
-    if shutil.which("trace") or shutil.which("ip-tracer"):
-        print(f"\n  {GREEN}[✔] IP-Tracer installed successfully!{RESET}\n")
-    else:
-        print(f"\n  {YELLOW}[~] IP-Tracer installed but 'trace' not in PATH.{RESET}")
-        print(f"  {DIM}Try: export PATH=$PATH:~/.local/bin or restart terminal.{RESET}\n")
-
+    print(f"\n  {GREEN}[✔] IP-Tracer installed!{RESET}\n")
     input(f"  {DIM}Press Enter to continue...{RESET}")
 
 
+def install_phoneinfoga():
+    print(f"\n{YELLOW}  [!] PhoneInfoga not found. Installing...{RESET}\n")
+    home = os.path.expanduser("~")
+    pif_dir = os.path.join(home, "PhoneInfoga")
+
+    steps = [
+        (f"  {PINK}[1/4] Cloning PhoneInfoga...{RESET}",
+         f"git clone https://github.com/ExpertAnonymous/PhoneInfoga.git {pif_dir} -q"),
+        (f"  {PINK}[2/4] Setting permissions...{RESET}",
+         f"chmod +x {pif_dir}/phoneinfoga.py 2>/dev/null; chmod +x {pif_dir}/*.sh 2>/dev/null; true"),
+        (f"  {PINK}[3/4] Installing Python deps...{RESET}",
+         f"cd {pif_dir} && python3 -m pip install -r requirements.txt -q 2>/dev/null; true"),
+        (f"  {PINK}[4/4] Installing phonenumbers lib...{RESET}",
+         f"python3 -m pip install phonenumbers -q"),
+    ]
+    for msg, cmd in steps:
+        print(msg)
+        os.system(cmd)
+        time.sleep(0.5)
+
+    print(f"\n  {GREEN}[✔] PhoneInfoga installed!{RESET}\n")
+    input(f"  {DIM}Press Enter to continue...{RESET}")
+
+
+def install_phonenumbers_lib():
+    """Install the phonenumbers Python lib silently (used for quick local parse)."""
+    os.system("python3 -m pip install phonenumbers -q 2>/dev/null")
+
+
 # ══════════════════════════════════════════
-#  SHERLOCK TOOL
+#  QUICK LOCAL PHONE PARSE
+#  Uses the `phonenumbers` library — offline
+# ══════════════════════════════════════════
+def quick_phone_parse(number: str):
+    """
+    Parse a phone number offline with the phonenumbers lib.
+    Returns a dict of basic info or None if lib not available / number invalid.
+    """
+    try:
+        import phonenumbers
+        from phonenumbers import geocoder, carrier, timezone, number_type, PhoneNumberType
+
+        parsed = phonenumbers.parse(number, None)
+        if not phonenumbers.is_valid_number(parsed):
+            return {"valid": False}
+
+        ntype_map = {
+            PhoneNumberType.MOBILE:          "📱 Mobile",
+            PhoneNumberType.FIXED_LINE:      "☎  Landline",
+            PhoneNumberType.FIXED_LINE_OR_MOBILE: "📱/☎  Mobile or Landline",
+            PhoneNumberType.VOIP:            "💻 VoIP",
+            PhoneNumberType.TOLL_FREE:       "🆓 Toll-Free",
+            PhoneNumberType.PREMIUM_RATE:    "💰 Premium Rate",
+            PhoneNumberType.SHARED_COST:     "🤝 Shared Cost",
+            PhoneNumberType.PAGER:           "📟 Pager",
+            PhoneNumberType.UNKNOWN:         "❓ Unknown",
+        }
+        ntype     = number_type(parsed)
+        line_str  = ntype_map.get(ntype, "❓ Unknown")
+        region    = geocoder.description_for_number(parsed, "en")
+        carr      = carrier.name_for_number(parsed, "en")
+        tzones    = timezone.time_zones_for_number(parsed)
+        intl_fmt  = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+        natl_fmt  = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.NATIONAL)
+        e164_fmt  = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
+        country_code = parsed.country_code
+        national_num = parsed.national_number
+
+        return {
+            "valid":        True,
+            "country_code": f"+{country_code}",
+            "national":     str(national_num),
+            "intl_format":  intl_fmt,
+            "natl_format":  natl_fmt,
+            "e164":         e164_fmt,
+            "region":       region or "Unknown",
+            "carrier":      carr or "Unknown",
+            "line_type":    line_str,
+            "timezones":    list(tzones),
+        }
+    except ImportError:
+        return None
+    except Exception:
+        return {"valid": False}
+
+
+def display_quick_info(info: dict, number: str):
+    """Pretty-print the quick parse results."""
+    if info is None:
+        print(f"\n  {YELLOW}[~] phonenumbers lib not available — skipping quick parse{RESET}")
+        return
+    if not info.get("valid"):
+        print(f"\n  {RED}[✘] '{number}' is not a valid international phone number.{RESET}")
+        print(f"  {DIM}    Tip: Always include the country code, e.g.  +971501234567{RESET}\n")
+        return
+
+    tz_str = ", ".join(info["timezones"]) if info["timezones"] else "Unknown"
+    print(f"""
+  {GRAY}╔══════════════════════════════════════════════════════╗{RESET}
+  {GRAY}║{PINK}         📱  QUICK PARSE RESULTS                     {GRAY}║{RESET}
+  {GRAY}╠══════════════════════════════════════════════════════╣{RESET}
+  {GRAY}║{RESET}  {DIM}Number (E.164) {RESET}  {GOLD}{info['e164']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Intl Format    {RESET}  {WHITE}{info['intl_format']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Local Format   {RESET}  {WHITE}{info['natl_format']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Country Code   {RESET}  {LGREEN}{info['country_code']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Region         {RESET}  {CYAN}{info['region']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Carrier        {RESET}  {YELLOW}{info['carrier']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Line Type      {RESET}  {WHITE}{info['line_type']:<37}{GRAY}║{RESET}
+  {GRAY}║{RESET}  {DIM}Timezone(s)    {RESET}  {LBLUE}{tz_str[:37]:<37}{GRAY}║{RESET}
+  {GRAY}╚══════════════════════════════════════════════════════╝{RESET}
+""")
+
+
+# ══════════════════════════════════════════
+#  SHERLOCK MODULE
 # ══════════════════════════════════════════
 def sherlock_checker():
     if shutil.which("sherlock") is None:
@@ -218,7 +349,6 @@ def sherlock_checker():
     while True:
         clear()
         sherlock_logo()
-
         print(f"""{GRAY}  ┌─  Select Mode ────────────────────────────────────┐{RESET}
   {GREEN}[1]{WHITE}   ➤  Single Username Scan                     {GRAY}│{RESET}
   {GREEN}[2]{WHITE}   ➤  Batch Scan from File                     {GRAY}│{RESET}
@@ -228,7 +358,6 @@ def sherlock_checker():
 """)
         choice = input(f"  {CYAN}▶{RESET} ").strip()
 
-        # ── Single ──
         if choice == "1":
             username = input(f"\n  {YELLOW}Target username:{RESET} ").strip()
             if not username:
@@ -236,18 +365,19 @@ def sherlock_checker():
             print(f"""
   {GRAY}┌────────────────────────────────────────────────┐{RESET}
   {GRAY}│{CYAN}  [TARGET]  {YELLOW}{username:<37}{CYAN}{GRAY}│{RESET}
-  {GRAY}│{WHITE}  [ENGINE]  Sherlock OSINT v2.x               {GRAY}│{RESET}
-  {GRAY}│{WHITE}  [SITES]   400+ platforms                    {GRAY}│{RESET}
+  {GRAY}│{WHITE}  [ENGINE]  Sherlock OSINT                     {GRAY}│{RESET}
+  {GRAY}│{WHITE}  [SITES]   400+ platforms                     {GRAY}│{RESET}
   {GRAY}└────────────────────────────────────────────────┘{RESET}
 """)
             spinner("Initializing Sherlock engine", 1.2, PURPLE)
-            print(f"\n  {GREEN}[✔] Scan started — results below:\n{RESET}")
-            print(f"  {GRAY}{'─'*50}{RESET}\n")
+            print(f"\n  {GREEN}[✔] Scan started:\n{RESET}")
+            divider(GRAY)
+            print()
             os.system(f"sherlock {username}")
-            print(f"\n  {GRAY}{'─'*50}{RESET}")
+            print()
+            divider(GRAY)
             input(f"\n  {DIM}Press Enter to continue...{RESET}")
 
-        # ── Batch ──
         elif choice == "2":
             path = input(f"\n  {YELLOW}File path (one username per line):{RESET} ").strip()
             if not os.path.exists(path):
@@ -256,25 +386,23 @@ def sherlock_checker():
                 continue
             with open(path, "r") as f:
                 users = [u.strip() for u in f if u.strip()]
-            print(f"\n  {CYAN}[+] Loaded {len(users)} target(s) from file{RESET}\n")
-            time.sleep(0.8)
+            print(f"\n  {CYAN}[+] Loaded {len(users)} target(s){RESET}\n")
+            time.sleep(0.6)
             for i, user in enumerate(users, 1):
-                print(f"  {PURPLE}╔══[ Target {i}/{len(users)} ══ {YELLOW}{user}{PURPLE} ]{'═'*10}╗{RESET}")
-                print(f"  {PURPLE}║{RESET}  {DIM}Scanning 400+ platforms...{RESET}")
+                print(f"  {PURPLE}╔══[ {i}/{len(users)} ══ {YELLOW}{user}{PURPLE} ]{'═'*15}╗{RESET}")
                 print(f"  {PURPLE}╚{'═'*42}╝{RESET}\n")
                 os.system(f"sherlock {user}")
                 print()
-            input(f"\n  {GREEN}[✔] Batch scan complete. Press Enter...{RESET}")
+            input(f"\n  {GREEN}[✔] Batch complete. Press Enter...{RESET}")
 
-        # ── Save ──
         elif choice == "3":
             username = input(f"\n  {YELLOW}Target username:{RESET} ").strip()
             if not username:
                 continue
             outfile = f"{username}_sherlock.txt"
-            spinner("Scanning & exporting results", 1.5, PURPLE)
+            spinner("Scanning & exporting", 1.5, PURPLE)
             os.system(f"sherlock {username} --output {outfile}")
-            print(f"\n  {GREEN}[✔] Results saved →{RESET} {CYAN}{outfile}{RESET}")
+            print(f"\n  {GREEN}[✔] Saved →{RESET} {CYAN}{outfile}{RESET}")
             input(f"  {DIM}Press Enter...{RESET}")
 
         elif choice == "0":
@@ -285,116 +413,224 @@ def sherlock_checker():
 
 
 # ══════════════════════════════════════════
-#  IP-TRACER TOOL
+#  IP-TRACER MODULE
 # ══════════════════════════════════════════
 def ip_tracer():
-    # Detect available command (trace or ip-tracer)
-    cmd = None
-    for c in ["trace", "ip-tracer"]:
-        if shutil.which(c):
-            cmd = c
-            break
+    cmd = next((c for c in ["trace", "ip-tracer"] if shutil.which(c)), None)
 
     if cmd is None:
         clear()
         ip_tracer_logo()
-        print(f"  {YELLOW}[!] IP-Tracer is not installed on this system.{RESET}\n")
-        print(f"  {GRAY}┌─  Install Options ──────────────────────────────┐{RESET}")
-        print(f"  {GREEN}│{WHITE}  [1]  Auto-install (git clone + sh install)    {GREEN}│{RESET}")
-        print(f"  {RED}│{WHITE}  [0]  Back to Main Menu                        {RED}│{RESET}")
-        print(f"  {GRAY}└────────────────────────────────────────────────┘{RESET}\n")
-        opt = input(f"  {CYAN}▶{RESET} ").strip()
-        if opt == "1":
+        print(f"  {YELLOW}[!] IP-Tracer is not installed.{RESET}\n")
+        print(f"  {GREEN}[1]{WHITE}  Auto-install   {RED}[0]{WHITE}  Back{RESET}\n")
+        if input(f"  {LBLUE}▶{RESET} ").strip() == "1":
             install_ip_tracer()
-            # Re-detect after install
-            for c in ["trace", "ip-tracer"]:
-                if shutil.which(c):
-                    cmd = c
-                    break
-            if cmd is None:
-                return
-        else:
+            cmd = next((c for c in ["trace", "ip-tracer"] if shutil.which(c)), None)
+        if cmd is None:
             return
 
     while True:
         clear()
         ip_tracer_logo()
-
         print(f"""{GRAY}  ┌─  Select Mode ────────────────────────────────────┐{RESET}
-  {GREEN}[1]{WHITE}   ➤  Trace My Own IP Address                  {GRAY}│{RESET}
-  {GREEN}[2]{WHITE}   ➤  Trace a Target IP Address                {GRAY}│{RESET}
-  {GREEN}[3]{WHITE}   ➤  Trace Multiple IPs from File             {GRAY}│{RESET}
+  {GREEN}[1]{WHITE}   ➤  Trace My Own IP                          {GRAY}│{RESET}
+  {GREEN}[2]{WHITE}   ➤  Trace a Target IP                        {GRAY}│{RESET}
+  {GREEN}[3]{WHITE}   ➤  Batch Trace from File                    {GRAY}│{RESET}
   {RED}[0]{WHITE}   ➤  Back to Main Menu                       {GRAY}│{RESET}
 {GRAY}  └───────────────────────────────────────────────────┘{RESET}
 """)
         choice = input(f"  {LBLUE}▶{RESET} ").strip()
 
-        # ── My IP ──
         if choice == "1":
-            print(f"""
-  {GRAY}┌────────────────────────────────────────────────┐{RESET}
-  {GRAY}│{LBLUE}  [MODE]    Self IP Trace                      {GRAY}│{RESET}
-  {GRAY}│{WHITE}  [SOURCE]  ip-api.com                         {GRAY}│{RESET}
-  {GRAY}└────────────────────────────────────────────────┘{RESET}
-""")
-            spinner("Fetching your IP information", 1.5, LBLUE)
+            spinner("Fetching your IP info", 1.5, LBLUE)
             print(f"\n  {LGREEN}[✔] Results:\n{RESET}")
-            print(f"  {GRAY}{'─'*50}{RESET}\n")
+            divider(LBLUE)
+            print()
             os.system(f"{cmd} -m")
-            print(f"\n  {GRAY}{'─'*50}{RESET}")
-            input(f"\n  {DIM}Press Enter to continue...{RESET}")
+            print()
+            divider(LBLUE)
+            input(f"\n  {DIM}Press Enter...{RESET}")
 
-        # ── Target IP ──
         elif choice == "2":
-            target = input(f"\n  {YELLOW}Enter target IP address:{RESET} ").strip()
+            target = input(f"\n  {YELLOW}Target IP address:{RESET} ").strip()
             if not target:
                 continue
-
-            # Basic validation
             parts = target.split(".")
-            valid = len(parts) == 4 and all(p.isdigit() and 0 <= int(p) <= 255 for p in parts)
-            if not valid:
-                print(f"\n  {RED}[✘] Invalid IP format. Use: xxx.xxx.xxx.xxx{RESET}")
+            if not (len(parts) == 4 and all(p.isdigit() and 0 <= int(p) <= 255 for p in parts)):
+                print(f"\n  {RED}[✘] Invalid IP: use format  xxx.xxx.xxx.xxx{RESET}")
                 input(f"  {DIM}Press Enter...{RESET}")
                 continue
-
             print(f"""
   {GRAY}┌────────────────────────────────────────────────┐{RESET}
   {GRAY}│{LBLUE}  [TARGET]  {YELLOW}{target:<37}{LBLUE}{GRAY}│{RESET}
   {GRAY}│{WHITE}  [ENGINE]  IP-Tracer via ip-api.com           {GRAY}│{RESET}
-  {GRAY}│{WHITE}  [DATA]    Geo · ISP · ASN · Timezone         {GRAY}│{RESET}
   {GRAY}└────────────────────────────────────────────────┘{RESET}
 """)
             spinner(f"Tracing {target}", 1.5, LBLUE)
-            print(f"\n  {LGREEN}[✔] Trace complete — results below:\n{RESET}")
-            print(f"  {GRAY}{'─'*50}{RESET}\n")
+            print(f"\n  {LGREEN}[✔] Results:\n{RESET}")
+            divider(LBLUE)
+            print()
             os.system(f"{cmd} -t {target}")
-            print(f"\n  {GRAY}{'─'*50}{RESET}")
-            input(f"\n  {DIM}Press Enter to continue...{RESET}")
+            print()
+            divider(LBLUE)
+            input(f"\n  {DIM}Press Enter...{RESET}")
 
-        # ── Batch IPs ──
         elif choice == "3":
             path = input(f"\n  {YELLOW}File path (one IP per line):{RESET} ").strip()
             if not os.path.exists(path):
                 print(f"\n  {RED}[✘] File not found: {path}{RESET}")
                 input(f"  {DIM}Press Enter...{RESET}")
                 continue
-
             with open(path, "r") as f:
-                ips = [line.strip() for line in f if line.strip()]
-
-            print(f"\n  {CYAN}[+] Loaded {len(ips)} IP(s) from file{RESET}\n")
-            time.sleep(0.6)
-
+                ips = [l.strip() for l in f if l.strip()]
+            print(f"\n  {CYAN}[+] Loaded {len(ips)} IP(s){RESET}\n")
             for i, ip in enumerate(ips, 1):
-                print(f"  {LBLUE}╔══[ IP {i}/{len(ips)} ══ {YELLOW}{ip}{LBLUE} ]{'═'*15}╗{RESET}")
-                print(f"  {LBLUE}║{RESET}  {DIM}Tracing...{RESET}")
-                print(f"  {LBLUE}╚{'═'*42}╝{RESET}\n")
+                print(f"  {LBLUE}╔══[ {i}/{len(ips)} ══ {YELLOW}{ip}{LBLUE} ]{'═'*10}╗{RESET}")
+                print(f"  {LBLUE}╚{'═'*36}╝{RESET}\n")
                 os.system(f"{cmd} -t {ip}")
                 print()
-                time.sleep(0.3)  # avoid rate-limiting ip-api
+                time.sleep(0.4)
+            input(f"\n  {LGREEN}[✔] Batch done. Press Enter...{RESET}")
 
-            input(f"\n  {LGREEN}[✔] Batch trace complete. Press Enter...{RESET}")
+        elif choice == "0":
+            break
+        else:
+            print(f"\n  {RED}[✘] Invalid option{RESET}")
+            time.sleep(1)
+
+
+# ══════════════════════════════════════════
+#  PHONE NUMBER OSINT MODULE
+# ══════════════════════════════════════════
+def phone_tracer():
+    # Silently try to ensure phonenumbers lib is available
+    try:
+        import phonenumbers  # noqa
+    except ImportError:
+        install_phonenumbers_lib()
+
+    # Locate PhoneInfoga script
+    home    = os.path.expanduser("~")
+    pif_dir = os.path.join(home, "PhoneInfoga")
+    pif_py  = os.path.join(pif_dir, "phoneinfoga.py")
+    pif_installed = os.path.isfile(pif_py)
+
+    while True:
+        clear()
+        phone_logo()
+
+        print(f"""{GRAY}  ┌─  Select Mode ────────────────────────────────────┐{RESET}
+  {GREEN}[1]{WHITE}   ➤  Quick Scan    (offline — instant)         {GRAY}│{RESET}
+  {GREEN}[2]{WHITE}   ➤  Deep Scan     (PhoneInfoga — full OSINT)  {GRAY}│{RESET}
+  {GREEN}[3]{WHITE}   ➤  Full Scan     (Quick + Deep combined)     {GRAY}│{RESET}
+  {GREEN}[4]{WHITE}   ➤  Batch Scan    (file of numbers)           {GRAY}│{RESET}
+  {GOLD}[5]{WHITE}   ➤  Install / Reinstall PhoneInfoga           {GRAY}│{RESET}
+  {RED}[0]{WHITE}   ➤  Back to Main Menu                       {GRAY}│{RESET}
+{GRAY}  └───────────────────────────────────────────────────┘{RESET}
+""")
+        choice = input(f"  {PINK}▶{RESET} ").strip()
+
+        # ── Quick scan ──
+        if choice == "1":
+            number = input(f"\n  {YELLOW}Phone number {DIM}(with country code, e.g. +971501234567){RESET}{YELLOW}:{RESET} ").strip()
+            if not number:
+                continue
+            # Normalize — add + if missing but starts with digits
+            if not number.startswith("+") and number[0].isdigit():
+                number = "+" + number
+            spinner("Parsing number", 0.8, PINK)
+            info = quick_phone_parse(number)
+            display_quick_info(info, number)
+            input(f"  {DIM}Press Enter to continue...{RESET}")
+
+        # ── Deep scan ──
+        elif choice == "2":
+            if not pif_installed:
+                print(f"\n  {YELLOW}[!] PhoneInfoga not found.{RESET}")
+                print(f"  {DIM}    Select option [5] to install it first.{RESET}\n")
+                input(f"  {DIM}Press Enter...{RESET}")
+                continue
+            number = input(f"\n  {YELLOW}Phone number {DIM}(with country code, e.g. +971501234567){RESET}{YELLOW}:{RESET} ").strip()
+            if not number:
+                continue
+            if not number.startswith("+"):
+                number = "+" + number
+            print(f"""
+  {GRAY}┌────────────────────────────────────────────────┐{RESET}
+  {GRAY}│{PINK}  [TARGET]  {GOLD}{number:<37}{PINK}{GRAY}│{RESET}
+  {GRAY}│{WHITE}  [ENGINE]  PhoneInfoga + Search Fingerprint  {GRAY}│{RESET}
+  {GRAY}│{WHITE}  [MODE]    Deep OSINT scan                   {GRAY}│{RESET}
+  {GRAY}└────────────────────────────────────────────────┘{RESET}
+""")
+            spinner("Launching PhoneInfoga deep scan", 1.5, PINK)
+            print(f"\n  {LGREEN}[✔] Scanning...\n{RESET}")
+            divider(PINK)
+            print()
+            os.system(f"python3 {pif_py} -n {number}")
+            print()
+            divider(PINK)
+            input(f"\n  {DIM}Press Enter to continue...{RESET}")
+
+        # ── Full scan (quick + deep) ──
+        elif choice == "3":
+            number = input(f"\n  {YELLOW}Phone number {DIM}(with country code, e.g. +971501234567){RESET}{YELLOW}:{RESET} ").strip()
+            if not number:
+                continue
+            if not number.startswith("+"):
+                number = "+" + number
+            # Step 1 — Quick parse
+            spinner("Quick parse (offline)", 0.8, PINK)
+            info = quick_phone_parse(number)
+            display_quick_info(info, number)
+            if info and info.get("valid") is False:
+                input(f"  {DIM}Press Enter...{RESET}")
+                continue
+            # Step 2 — Deep scan
+            if not pif_installed:
+                print(f"\n  {YELLOW}[~] PhoneInfoga not installed — skipping deep scan.{RESET}")
+                print(f"  {DIM}    Use option [5] to install it.{RESET}\n")
+            else:
+                print(f"\n  {PINK}[ PHASE 2 ]  PhoneInfoga deep scan...{RESET}\n")
+                spinner("Launching PhoneInfoga", 1.2, PINK)
+                print(f"\n  {LGREEN}[✔] Results:\n{RESET}")
+                divider(PINK)
+                print()
+                os.system(f"python3 {pif_py} -n {number}")
+                print()
+                divider(PINK)
+            input(f"\n  {DIM}Press Enter to continue...{RESET}")
+
+        # ── Batch ──
+        elif choice == "4":
+            path = input(f"\n  {YELLOW}File path {DIM}(one number per line, with country code){RESET}{YELLOW}:{RESET} ").strip()
+            if not os.path.exists(path):
+                print(f"\n  {RED}[✘] File not found: {path}{RESET}")
+                input(f"  {DIM}Press Enter...{RESET}")
+                continue
+            with open(path, "r") as f:
+                numbers = [l.strip() for l in f if l.strip()]
+            print(f"\n  {CYAN}[+] Loaded {len(numbers)} number(s){RESET}\n")
+            time.sleep(0.5)
+            for i, num in enumerate(numbers, 1):
+                if not num.startswith("+"):
+                    num = "+" + num
+                print(f"  {PINK}╔══[ Number {i}/{len(numbers)} ══ {GOLD}{num}{PINK} ]{'═'*5}╗{RESET}")
+                print(f"  {PINK}╚{'═'*42}╝{RESET}")
+                info = quick_phone_parse(num)
+                display_quick_info(info, num)
+                if pif_installed and info and info.get("valid") is not False:
+                    print(f"  {DIM}Running deep scan...{RESET}\n")
+                    os.system(f"python3 {pif_py} -n {num}")
+                divider(PINK, "─", 52)
+                print()
+                time.sleep(0.3)
+            input(f"\n  {LGREEN}[✔] Batch complete. Press Enter...{RESET}")
+
+        # ── Install ──
+        elif choice == "5":
+            install_phoneinfoga()
+            # Refresh pif_installed flag
+            pif_installed = os.path.isfile(pif_py)
 
         elif choice == "0":
             break
@@ -410,25 +646,24 @@ def update():
     clear()
     print(f"""
   {PURPLE}╔══════════════════════════════════════════════════╗
-  ║              F O R C E   U P D A T E             ║
+  ║            F O R C E   U P D A T E              ║
   ╚══════════════════════════════════════════════════╝{RESET}
 """)
     home     = os.path.expanduser("~")
     tool_dir = os.path.join(home, "Toolz")
-
     steps = [
         (f"  {YELLOW}[1/3] Removing old installation...{RESET}",
          lambda: os.system(f"rm -rf {tool_dir}") if os.path.exists(tool_dir) else None),
-        (f"  {CYAN}[2/3] Pulling latest version from GitHub...{RESET}",
+        (f"  {CYAN}[2/3] Cloning latest version...{RESET}",
          lambda: os.system(f"cd {home} && git clone https://github.com/00xk/Toolz.git -q")),
-        (f"  {GREEN}[3/3] Finalizing...{RESET}", lambda: None),
+        (f"  {GREEN}[3/3] Finalizing...{RESET}",
+         lambda: None),
     ]
     for msg, action in steps:
         print(msg)
         action()
         time.sleep(0.9)
-
-    print(f"\n  {GREEN}[✔] Toolz updated to latest version!{RESET}\n")
+    print(f"\n  {GREEN}[✔] Toolz updated!{RESET}\n")
     time.sleep(1.5)
     os.system(f"cd {tool_dir} && python3 toolz.py")
     sys.exit(0)
@@ -438,16 +673,17 @@ def update():
 #  MAIN MENU
 # ══════════════════════════════════════════
 def menu():
-    print(f"""{GRAY}  ╔═══════════════════════════════════════════════════╗
-  ║              M A I N   M E N U                 ║
-  ╠═══════════════════════════════════════════════════╣
-  ║                                                 ║
-  ║   {GREEN}[1]{WHITE}   🔍  Sherlock OSINT  — Username Hunt       {GRAY}║
-  ║   {LBLUE}[2]{WHITE}   🌐  IP Tracer       — Geolocation         {GRAY}║
-  ║   {PURPLE}[3]{WHITE}   🔄  Update Tool     — Pull Latest         {GRAY}║
-  ║   {RED}[0]{WHITE}   ✖   Exit                                {GRAY}║
-  ║                                                 ║
-  ╚═══════════════════════════════════════════════════╝{RESET}
+    print(f"""{GRAY}  ╔═══════════════════════════════════════════════════════╗
+  ║               M A I N   M E N U                    ║
+  ╠═══════════════════════════════════════════════════════╣
+  ║                                                     ║
+  ║   {GREEN}[1]{WHITE}   🔍  Sherlock OSINT   — Username Hunt       {GRAY}║
+  ║   {LBLUE}[2]{WHITE}   🌐  IP Tracer        — Geolocation         {GRAY}║
+  ║   {PINK}[3]{WHITE}   📱  Phone Point      — Number OSINT        {GRAY}║
+  ║   {PURPLE}[4]{WHITE}   🔄  Update Tool      — Pull Latest         {GRAY}║
+  ║   {RED}[0]{WHITE}   ✖   Exit                                  {GRAY}║
+  ║                                                     ║
+  ╚═══════════════════════════════════════════════════════╝{RESET}
 """)
 
 
@@ -459,7 +695,6 @@ def main():
         clear()
         logo()
         menu()
-
         choice = input(f"  {CYAN}▶{RESET} ").strip()
 
         if choice == "1":
@@ -467,13 +702,15 @@ def main():
         elif choice == "2":
             ip_tracer()
         elif choice == "3":
+            phone_tracer()
+        elif choice == "4":
             update()
         elif choice == "0":
             clear()
             print(f"\n  {CYAN}Stay curious. Stay ethical.{RESET}  {DIM}Goodbye 👋{RESET}\n")
             sys.exit(0)
         else:
-            print(f"\n  {RED}[✘] Invalid option. Choose 0–3.{RESET}")
+            print(f"\n  {RED}[✘] Invalid option. Choose 0–4.{RESET}")
             time.sleep(1)
 
 
