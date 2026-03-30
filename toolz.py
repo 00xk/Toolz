@@ -312,31 +312,29 @@ def quick_phone_parse(number: str):
         return {"valid": False}
 
 
-def display_quick_info(info: dict, number: str):
-    """Pretty-print the quick parse results."""
-    if info is None:
-        print(f"\n  {YELLOW}[~] phonenumbers lib not available — skipping quick parse{RESET}")
-        return
-    if not info.get("valid"):
-        print(f"\n  {RED}[✘] '{number}' is not a valid international phone number.{RESET}")
-        print(f"  {DIM}    Tip: Always include the country code, e.g.  +971501234567{RESET}\n")
+def display_quick_info(info, number):
+    if not info or not info.get("valid"):
+        print(f"{RED}Invalid number{RESET}")
         return
 
-    tz_str = ", ".join(info["timezones"]) if info["timezones"] else "Unknown"
+    device = detect_device_info(info)
+    adv = advanced_phone_analysis(info)
+
     print(f"""
   {GRAY}╔══════════════════════════════════════════════════════╗{RESET}
-  {GRAY}║{PINK}         📱  QUICK PARSE RESULTS                     {GRAY}║{RESET}
+  {GRAY}║{PINK}        📱  ELITE PHONE INTEL                     {GRAY}║{RESET}
   {GRAY}╠══════════════════════════════════════════════════════╣{RESET}
-  {GRAY}║{RESET}  {DIM}Number (E.164) {RESET}  {GOLD}{info['e164']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Intl Format    {RESET}  {WHITE}{info['intl_format']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Local Format   {RESET}  {WHITE}{info['natl_format']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Country Code   {RESET}  {LGREEN}{info['country_code']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Region         {RESET}  {CYAN}{info['region']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Carrier        {RESET}  {YELLOW}{info['carrier']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Line Type      {RESET}  {WHITE}{info['line_type']:<37}{GRAY}║{RESET}
-  {GRAY}║{RESET}  {DIM}Timezone(s)    {RESET}  {LBLUE}{tz_str[:37]:<37}{GRAY}║{RESET}
+  {GRAY}║ Number   {GOLD}{info['e164']:<38}{GRAY}║{RESET}
+  {GRAY}║ Region   {CYAN}{info['region']:<38}{GRAY}║{RESET}
+  {GRAY}║ Carrier  {YELLOW}{info['carrier']:<38}{GRAY}║{RESET}
+  {GRAY}║ Type     {WHITE}{info['line_type']:<38}{GRAY}║{RESET}
+  {GRAY}║ Device   {GREEN}{device:<38}{GRAY}║{RESET}
+  {GRAY}║ VoIP     {RED if adv['voip']=='Yes' else GREEN}{adv['voip']:<38}{GRAY}║{RESET}
+  {GRAY}║ Risk     {YELLOW}{adv['risk']:<38}{GRAY}║{RESET}
   {GRAY}╚══════════════════════════════════════════════════════╝{RESET}
 """)
+
+    social_scan(number)
 
 
 # ══════════════════════════════════════════
@@ -498,7 +496,31 @@ def ip_tracer():
             print(f"\n  {RED}[✘] Invalid option{RESET}")
             time.sleep(1)
 
+def detect_device_info(info):
+    carrier = (info.get("carrier") or "").lower()
+    region = (info.get("region") or "").lower()
 
+    if any(x in carrier for x in ["etisalat","vodafone","orange"]):
+        return "🤖 Android (likely)"
+    if any(x in region for x in ["usa","uk"]):
+        return "🍎 iPhone (likely)"
+    return "❓ Unknown"
+
+
+def advanced_phone_analysis(info):
+    carrier = (info.get("carrier") or "").lower()
+    line = info.get("line_type","")
+
+    voip = "Yes" if "voip" in line.lower() else "No"
+    risk = "🟢 Low" if "mobile" in line.lower() else "🟡 Medium"
+
+    return {"voip":voip,"risk":risk}
+
+
+def social_scan(number):
+    print(f"\n  {CYAN}[ SOCIAL ]{RESET}")
+    print(f"  WhatsApp: https://wa.me/{number.replace('+','')}")
+    print(f"  Telegram: https://t.me/{number.replace('+','')}")
 # ══════════════════════════════════════════
 #  PHONE NUMBER OSINT MODULE
 # ══════════════════════════════════════════
@@ -638,7 +660,34 @@ def phone_tracer():
             print(f"\n  {RED}[✘] Invalid option{RESET}")
             time.sleep(1)
 
+def install_twilio():
+    os.system("python3 -m pip install twilio -q")
 
+
+def sms_sender():
+    try:
+        from twilio.rest import Client
+    except:
+        install_twilio()
+        from twilio.rest import Client
+
+    clear()
+    print(f"{CYAN}=== SMS TEST SYSTEM ==={RESET}\n")
+
+    sid = input("SID: ")
+    token = input("TOKEN: ")
+    from_num = input("FROM (Twilio): ")
+    to = input("TO: ")
+    msg = input("MESSAGE: ")
+
+    try:
+        client = Client(sid, token)
+        m = client.messages.create(body=msg, from_=from_num, to=to)
+        print(f"{GREEN}Sent! SID: {m.sid}{RESET}")
+    except Exception as e:
+        print(f"{RED}Error: {e}{RESET}")
+
+    input("\nPress Enter...")
 # ══════════════════════════════════════════
 #  FORCE UPDATE
 # ══════════════════════════════════════════
@@ -676,17 +725,16 @@ def menu():
     print(f"""{GRAY}  ╔═══════════════════════════════════════════════════════╗
   ║               M A I N   M E N U                    ║
   ╠═══════════════════════════════════════════════════════╣
-  ║                                                     ║
-  ║   {GREEN}[1]{WHITE}   🔍  Sherlock OSINT   — Username Hunt       {GRAY}║
-  ║   {LBLUE}[2]{WHITE}   🌐  IP Tracer        — Geolocation         {GRAY}║
-  ║   {PINK}[3]{WHITE}   📱  Phone Point      — Number OSINT        {GRAY}║
-  ║   {PURPLE}[4]{WHITE}   🔄  Update Tool      — Pull Latest         {GRAY}║
-  ║   {RED}[0]{WHITE}   ✖   Exit                                  {GRAY}║
-  ║                                                     ║
+
+  {GREEN}[1]{WHITE} Sherlock OSINT
+  {LBLUE}[2]{WHITE} IP Tracer
+  {PINK}[3]{WHITE} Phone OSINT
+  {CYAN}[4]{WHITE} SMS Sender
+  {PURPLE}[5]{WHITE} Update Tool
+  {RED}[0]{WHITE} Exit
+
   ╚═══════════════════════════════════════════════════════╝{RESET}
 """)
-
-
 # ══════════════════════════════════════════
 #  ENTRY POINT
 # ══════════════════════════════════════════
@@ -703,8 +751,10 @@ def main():
             ip_tracer()
         elif choice == "3":
             phone_tracer()
-        elif choice == "4":
-            update()
+       elif choice == "4":
+    sms_sender()
+elif choice == "5":
+    update()
         elif choice == "0":
             clear()
             print(f"\n  {CYAN}Stay curious. Stay ethical.{RESET}  {DIM}Goodbye 👋{RESET}\n")
