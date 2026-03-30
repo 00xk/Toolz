@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import time
-import platform
 import subprocess
 
 # Colors
@@ -11,143 +10,111 @@ YELLOW = "\033[1;33m"
 CYAN = "\033[1;36m"
 WHITE = "\033[1;37m"
 PURPLE = "\033[1;35m"
-GRAY = "\033[0;37m"
 RESET = "\033[0m"
 
 def clear():
     os.system("clear")
 
-def banner():
-    print(RED + "════════════════════════════════════════════════════════════════")
-    print(f"{CYAN}Toolz v3.0 - Advanced System Tool{RESET}")
-    print("════════════════════════════════════════════════════════════════")
+# =========================
+# 💀 LOGO
+# =========================
+def logo():
+    print(f"""{RED}
+        ████████╗ ██████╗  ██████╗ ██╗     ███████╗
+        ╚══██╔══╝██╔═══██╗██╔═══██╗██║     ╚══███╔╝
+           ██║   ██║   ██║██║   ██║██║       ███╔╝
+           ██║   ██║   ██║██║   ██║██║      ███╔╝
+           ██║   ╚██████╔╝╚██████╔╝███████╗███████╗
+           ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝
 
-def menu():
-    print(f"""
-{CYAN}[1]{WHITE} System Monitor
-{CYAN}[2]{WHITE} Update Tool
-{CYAN}[3]{WHITE} About
-{RED}[0]{WHITE} Exit
-""")
+              ☠️  ADVANCED HACKING TOOL ☠️
+{RESET}""")
 
-def run_cmd(cmd):
-    try:
-        return subprocess.check_output(cmd, shell=True).decode().strip()
-    except:
-        return "N/A"
-
-# ================================
-# SYSTEM MONITOR
-# ================================
-def system_monitor():
-    while True:
-        clear()
-        print(f"{YELLOW}===== SYSTEM MONITOR ====={RESET}\n")
-
-        print(f"{CYAN}OS Info:{RESET}")
-        print("OS:", platform.system())
-        print("Kernel:", platform.release())
-        print("Arch:", platform.machine())
-
-        print(f"\n{CYAN}Host Info:{RESET}")
-        print("Hostname:", platform.node())
-        print("User:", run_cmd("whoami"))
-        print("Uptime:", run_cmd("uptime -p"))
-
-        print(f"\n{CYAN}CPU & Memory:{RESET}")
-        cpu = run_cmd("grep -m1 'model name' /proc/cpuinfo | cut -d: -f2")
-        print("CPU:", cpu[:60])
-        print("Memory:", run_cmd("free -h | grep Mem"))
-
-        print(f"\n{CYAN}Network:{RESET}")
-        print("IP:", run_cmd("hostname -I"))
-        print("Gateway:", run_cmd("ip route | grep default | awk '{print $3}'"))
-        print("Public IP:", run_cmd("curl -s ifconfig.me"))
-
-        print(f"\n{CYAN}Disk:{RESET}")
-        print(run_cmd("df -h | head -5"))
-
-        print(f"\n{CYAN}Top CPU Processes:{RESET}")
-        print(run_cmd("ps aux --sort=-%cpu | head -5"))
-
-        print(f"\n{GREEN}[R] Refresh  [B] Back{RESET}")
-        choice = input(">> ").lower()
-        if choice == "b":
-            break
-
-# ================================
-# UPDATE TOOL
-# ================================
-def update_tool():
+# =========================
+# 🕵️ Sherlock Checker
+# =========================
+def sherlock_checker():
     clear()
-    print(f"{PURPLE}===== UPDATE TOOL ====={RESET}\n")
+    print(f"{CYAN}=== Sherlock Username Checker ==={RESET}\n")
 
-    if run_cmd("which git") == "":
+    username = input("Enter username: ")
+
+    print(f"\n{YELLOW}Searching for '{username}'...{RESET}\n")
+    time.sleep(1)
+
+    # Fake demo results (safe)
+    sites = ["Instagram", "Twitter", "GitHub", "TikTok"]
+
+    for site in sites:
+        print(f"{GREEN}[FOUND]{RESET} {site}: https://{site.lower()}.com/{username}")
+        time.sleep(0.3)
+
+    input("\nPress Enter...")
+
+# =========================
+# 🎣 Phishing (SAFE DEMO)
+# =========================
+def phishing():
+    clear()
+    print(f"{RED}=== Phishing Module (EDUCATIONAL) ==={RESET}\n")
+
+    print(f"{YELLOW}This is a demo for awareness only.{RESET}")
+    print("Learn how phishing works to protect yourself.\n")
+
+    print(f"{CYAN}Example:{RESET}")
+    print("Fake login pages try to steal credentials.\n")
+
+    input("Press Enter...")
+
+# =========================
+# 🔄 Update
+# =========================
+def update():
+    clear()
+    print(f"{PURPLE}=== Updating Tool ==={RESET}\n")
+
+    if os.system("which git > /dev/null") != 0:
         print(f"{RED}Git not installed!{RESET}")
         input("Press Enter...")
         return
 
-    repo = "https://github.com/00xk/Toolz"
-    tool_dir = os.path.expanduser("~/Toolz")
+    os.system("git pull")
+    input("\nUpdated. Press Enter...")
 
-    if os.path.exists(tool_dir):
-        print(f"{YELLOW}Updating existing repo...{RESET}")
-        os.system(f"cd {tool_dir} && git pull")
-    else:
-        print(f"{YELLOW}Cloning repo...{RESET}")
-        os.system(f"cd ~ && git clone {repo}")
-
-    input("\nDone. Press Enter...")
-
-# ================================
-# ABOUT
-# ================================
-def about():
-    clear()
-    print(f"""{PURPLE}
-===== ABOUT TOOLZ =====
-
-Name: Toolz
-Version: 3.0
-Author: 00xk
-
-Features:
-- System Monitoring
-- Network Info
-- Disk Usage
-- Auto Update
-
-WARNING:
-Educational use only!
-{RESET}
+# =========================
+# 📋 MENU
+# =========================
+def menu():
+    print(f"""
+{GREEN}[1]{WHITE} Sherlock Checker
+{GREEN}[2]{WHITE} Phishing (Demo)
+{GREEN}[3]{WHITE} Update
+{RED}[4]{WHITE} Exit
 """)
-    input("Press Enter...")
 
-# ================================
-# MAIN LOOP
-# ================================
+# =========================
+# 🚀 MAIN
+# =========================
 def main():
     while True:
         clear()
-        banner()
+        logo()
         menu()
+
         choice = input(">> ")
 
         if choice == "1":
-            system_monitor()
+            sherlock_checker()
         elif choice == "2":
-            update_tool()
+            phishing()
         elif choice == "3":
-            about()
-        elif choice == "0":
+            update()
+        elif choice == "4":
             print("Goodbye 👋")
             break
         else:
-            print("Invalid choice")
+            print("Invalid option")
             time.sleep(1)
 
-# ================================
-# START
-# ================================
 if __name__ == "__main__":
     main()
