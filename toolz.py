@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import time
-import subprocess
+import shutil
 
 # Colors
 RED = "\033[1;31m"
@@ -16,7 +16,7 @@ def clear():
     os.system("clear")
 
 # =========================
-# 💀 LOGO
+# 💀 MAIN LOGO
 # =========================
 def logo():
     print(f"""{RED}
@@ -31,106 +31,101 @@ def logo():
 {RESET}""")
 
 # =========================
-# 🕵️ Sherlock Checker
+# 🕵️ SHERLOCK LOGO
 # =========================
-def show_sherlock_image():
-    # Try to open image (Linux)
-    if os.path.exists("sherlock.png"):
-        os.system("xdg-open sherlock.png > /dev/null 2>&1 &")
 def sherlock_logo():
-    print(f"""{CYAN}
-        ▄███████▄  ██░ ██ ▓█████  ██▀███   ██▓     ▒█████   ▄████▄   ██ ▄█▀
-       ▓██░  ██▒ ▓██░ ██▒▓█   ▀ ▓██ ▒ ██▒▓██▒    ▒██▒  ██▒▒██▀ ▀█   ██▄█▒ 
-       ▓██░ ██▓▒ ▒██▀▀██░▒███   ▓██ ░▄█ ▒▒██░    ▒██░  ██▒▒▓█    ▄ ▓███▄░ 
-       ▒██▄█▓▒ ▒ ░▓█ ░██ ▒▓█  ▄ ▒██▀▀█▄  ▒██░    ▒██   ██░▒▓▓▄ ▄██▒▓██ █▄ 
-       ▒██▒ ░  ░ ░▓█▒░██▓░▒████▒░██▓ ▒██▒░██████▒░ ████▓▒░▒ ▓███▀ ░▒██▒ █▄
-       ▒▓▒░ ░  ░  ▒ ░░▒░▒░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░▓  ░░ ▒░▒░▒░ ░ ░▒ ▒  ░▒ ▒▒ ▓▒
-       ░▒ ░       ▒ ░▒░ ░ ░ ░  ░  ░▒ ░ ▒░░ ░ ▒  ░  ░ ▒ ▒░   ░  ▒   ░ ░▒ ▒░
-       ░░         ░  ░░ ░   ░     ░░   ░   ░ ░   ░ ░ ░ ▒  ░        ░ ░░ ░ 
-                  ░  ░  ░   ░  ░   ░         ░  ░    ░ ░  ░ ░      ░  ░   
+    print(f"""{PURPLE}
+        ┌──────────────────────────────────────────────┐
+        │                SHERLOCK OSINT                │
+        └──────────────────────────────────────────────┘
+{RESET}{CYAN}
+              .-.
+             (o o)
+             | O \\
+             |   |
+            /|   |\\
+           /_|   |_\\
+             /   \\
+            /_____\\
 
-                🕵️ SHERLOCK USERNAME FINDER 🕵️
-{RESET}""")
+{RESET}{GREEN}        🕵️  USERNAME INVESTIGATION SYSTEM  🕵️{RESET}
 
+{YELLOW}        > Scan usernames across 400+ sites
+        > Fast OSINT lookup
+        > Multi-target support{RESET}
+""")
+
+# =========================
+# INSTALL SHERLOCK
+# =========================
 def install_sherlock():
     print(f"{YELLOW}[!] Sherlock not found. Installing...{RESET}")
     time.sleep(1)
 
-    # Try pip install
-    result = os.system("pip install sherlock-project > /dev/null 2>&1")
-
-    if result != 0:
-        result = os.system("pip3 install sherlock-project > /dev/null 2>&1")
-
-    if result == 0:
-        print(f"{GREEN}[✓] Sherlock installed successfully!{RESET}")
+    if os.system("python3 -m pip install sherlock-project > /dev/null 2>&1") == 0:
+        print(f"{GREEN}[✓] Installed successfully!{RESET}")
     else:
-        print(f"{RED}[✗] Failed to install Sherlock!{RESET}")
-        print(f"{WHITE}Try manually: pip install sherlock-project{RESET}")
+        print(f"{RED}[✗] Install failed!{RESET}")
         input("Press Enter...")
 
+# =========================
+# SHERLOCK TOOL
+# =========================
 def sherlock_checker():
-    # Auto install check
-    import shutil
     if shutil.which("sherlock") is None:
         install_sherlock()
-
-    # Show image logo
-    show_sherlock_image()
 
     while True:
         clear()
         sherlock_logo()
-        print(f"""
-{GREEN}[1]{WHITE} Set Username
-{GREEN}[2]{WHITE} Multi Username (from file)
-{GREEN}[3]{WHITE} Back
+
+        print(f"""{CYAN}
+┌────────────────────────────────────┐
+│            SHERLOCK MENU           │
+└────────────────────────────────────┘
+
+{GREEN}[1]{WHITE} ➤ Scan Single Username
+{GREEN}[2]{WHITE} ➤ Scan Multiple Usernames
+{GREEN}[3]{WHITE} ➤ Back
+{RESET}
 """)
 
         choice = input(">> ")
 
-        # =====================
-        # SINGLE USERNAME
-        # =====================
+        # SINGLE USER
         if choice == "1":
             username = input("\nEnter username: ")
 
-            print(f"\n{CYAN}[+] Running Sherlock...{RESET}\n")
+            print(f"""{CYAN}
+[+] Initializing Sherlock Engine...
+[+] Target: {YELLOW}{username}{CYAN}
+[+] Scanning platforms...
+{RESET}""")
             time.sleep(1)
 
-            # Run Sherlock
             os.system(f"sherlock {username}")
-
             input("\nPress Enter...")
 
-        # =====================
-        # MULTI USERNAME FILE
-        # =====================
+        # MULTI USER
         elif choice == "2":
-            filepath = input("\nEnter file path (usernames list): ")
+            path = input("\nEnter file path: ")
 
-            if not os.path.exists(filepath):
+            if not os.path.exists(path):
                 print(f"{RED}File not found!{RESET}")
                 input("Press Enter...")
                 continue
 
-            print(f"\n{CYAN}[+] Running Sherlock on list...{RESET}\n")
-            time.sleep(1)
-
-            # Loop through file
-            with open(filepath, "r") as f:
+            with open(path, "r") as f:
                 for user in f:
                     user = user.strip()
                     if user:
-                        print(f"{YELLOW}Checking: {user}{RESET}")
+                        print(f"{PURPLE}═══════════════════════════════{RESET}")
+                        print(f"{CYAN}[TARGET]{RESET} {YELLOW}{user}{RESET}")
+                        print(f"{CYAN}[STATUS]{RESET} Scanning...\n")
                         os.system(f"sherlock {user}")
-                        print("\n" + "-"*40)
 
             input("\nDone. Press Enter...")
 
-        # =====================
-        # BACK
-        # =====================
         elif choice == "3":
             break
 
@@ -139,72 +134,66 @@ def sherlock_checker():
             time.sleep(1)
 
 # =========================
-# 🎣 Phishing (SAFE DEMO)
+# PHISHING (SAFE DEMO)
 # =========================
 def phishing():
     clear()
-    print(f"{RED}=== Phishing Module (EDUCATIONAL) ==={RESET}\n")
+    print(f"""{RED}
+┌────────────────────────────┐
+│     PHISHING MODULE        │
+└────────────────────────────┘
+{RESET}""")
 
-    print(f"{YELLOW}This is a demo for awareness only.{RESET}")
+    print(f"{YELLOW}This is for educational purposes only!{RESET}")
     print("Learn how phishing works to protect yourself.\n")
-
-    print(f"{CYAN}Example:{RESET}")
-    print("Fake login pages try to steal credentials.\n")
 
     input("Press Enter...")
 
 # =========================
-# 🔄 Update
+# FORCE UPDATE
 # =========================
 def update():
     clear()
-    print(f"{PURPLE}=== FORCE UPDATE TOOL ==={RESET}\n")
+    print(f"{PURPLE}=== FORCE UPDATE ==={RESET}\n")
 
     home = os.path.expanduser("~")
     tool_dir = os.path.join(home, "Toolz")
-    repo = "https://github.com/00xk/Toolz.git"
-
-    # Check git
-    if os.system("which git > /dev/null") != 0:
-        print(f"{RED}Git is not installed!{RESET}")
-        input("Press Enter...")
-        return
 
     print(f"{YELLOW}[+] Removing old version...{RESET}")
     time.sleep(1)
 
-    # Remove old folder
     if os.path.exists(tool_dir):
         os.system(f"rm -rf {tool_dir}")
 
     print(f"{CYAN}[+] Downloading latest version...{RESET}")
     time.sleep(1)
 
-    # Clone fresh
-    os.system(f"cd {home} && git clone {repo}")
+    os.system(f"cd {home} && git clone https://github.com/00xk/Toolz.git")
 
-    print(f"{GREEN}[✓] Update completed successfully!{RESET}")
-    print(f"{WHITE}Restarting tool...{RESET}")
+    print(f"{GREEN}[✓] Updated successfully!{RESET}")
     time.sleep(2)
 
-    # Restart tool
     os.system(f"cd {tool_dir} && python3 toolz.py")
-
     exit()
 
 # =========================
-# 📋 MENU
+# MAIN MENU
 # =========================
 def menu():
-    print(f"""
+    print(f"""{CYAN}
+┌────────────────────────────────────┐
+│              MAIN MENU             │
+└────────────────────────────────────┘
+
 {GREEN}[1]{WHITE} Sherlock Checker
 {GREEN}[2]{WHITE} Phishing (Demo)
-{GREEN}[3]{WHITE} Update
+{GREEN}[3]{WHITE} Update Tool
 {RED}[4]{WHITE} Exit
+{RESET}
 """)
 
 # =========================
-# 🚀 MAIN
+# MAIN LOOP
 # =========================
 def main():
     while True:
@@ -224,7 +213,7 @@ def main():
             print("Goodbye 👋")
             break
         else:
-            print("Invalid option")
+            print(f"{RED}Invalid option{RESET}")
             time.sleep(1)
 
 if __name__ == "__main__":
