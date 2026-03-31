@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # ╔══════════════════════════════════════════════════════════════╗
-# ║                  T O O L Z  v6.0                            ║
+# ║                  T O O L Z  v7.0                            ║
 # ║         Advanced OSINT & Utility Toolkit                    ║
 # ║         Linux & Termux  |  github.com/00xk/Toolz            ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-import os, sys, time, shutil
+import os, sys, time, shutil, subprocess
 
 # ─────────────────────────────────────────────────────────────
 #  COLORS
@@ -13,19 +13,18 @@ import os, sys, time, shutil
 R   = "\033[0m"
 BD  = "\033[1m"
 DIM = "\033[2m"
-K   = "\033[1;90m"      # dark gray
-W   = "\033[1;37m"      # white
-RE  = "\033[1;31m"      # red
-GR  = "\033[1;32m"      # green
-YL  = "\033[1;33m"      # yellow
-CY  = "\033[1;36m"      # cyan
-PU  = "\033[1;35m"      # purple
-OR  = "\033[38;5;208m"  # orange
-LB  = "\033[38;5;39m"   # light blue
-LG  = "\033[38;5;82m"   # light green
-PK  = "\033[38;5;213m"  # pink
-GD  = "\033[38;5;220m"  # gold
-
+K   = "\033[1;90m"
+W   = "\033[1;37m"
+RE  = "\033[1;31m"
+GR  = "\033[1;32m"
+YL  = "\033[1;33m"
+CY  = "\033[1;36m"
+PU  = "\033[1;35m"
+OR  = "\033[38;5;208m"
+LB  = "\033[38;5;39m"
+LG  = "\033[38;5;82m"
+PK  = "\033[38;5;213m"
+GD  = "\033[38;5;220m"
 
 # ─────────────────────────────────────────────────────────────
 #  CORE UTILITIES
@@ -36,33 +35,25 @@ def clr():
 def pause(msg="Press Enter to continue..."):
     input(f"\n  {DIM}{msg}{R}")
 
-def ln(c=K, ch="─", w=56):
-    print(f"  {c}{ch*w}{R}")
+def ln(c=K, ch="─", w=58):
+    print(f"  {c}{ch * w}{R}")
 
 def row(label, value, lc=K, vc=W, lw=16):
-    print(f"  {lc}│{R}  {DIM}{label:<{lw}}{R}  {vc}{value}{R}")
-
-def box_top(c=K, w=56):
-    print(f"  {c}┌{'─'*w}┐{R}")
-
-def box_bot(c=K, w=56):
-    print(f"  {c}└{'─'*w}┘{R}")
-
-def box_row(text, c=K, w=56):
-    print(f"  {c}│{R} {text:<{w-1}}{c}│{R}")
+    label_str = f"{DIM}{label:<{lw}}{R}"
+    print(f"  {lc}│{R}  {label_str}  {vc}{value}{R}")
 
 def spinner(label, dur=1.5, c=CY):
     fr = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
-    t  = time.time() + dur
-    i  = 0
-    while time.time() < t:
+    end = time.time() + dur
+    i   = 0
+    while time.time() < end:
         sys.stdout.write(f"\r  {c}{fr[i%10]}{R}  {W}{label}...{R}  ")
         sys.stdout.flush()
         time.sleep(0.08)
         i += 1
     sys.stdout.write("\r" + " "*64 + "\r")
 
-def pbar(label, dur=1.8, c=CY):
+def pbar(label, dur=2.0, c=CY):
     for i in range(21):
         filled = int(30 * i / 20)
         bar = "█" * filled + "░" * (30 - filled)
@@ -72,129 +63,121 @@ def pbar(label, dur=1.8, c=CY):
     print()
 
 def section(title, c=CY):
-    print(f"\n  {c}{'─'*4} {BD}{title}{R}{c} {'─'*(48-len(title))}{R}")
+    print(f"\n  {c}{'━'*4} {BD}{title}{R}{c} {'━'*(50-len(title))}{R}\n")
 
-def ok(msg):  print(f"\n  {GR}[✔]{R} {W}{msg}{R}")
-def err(msg): print(f"\n  {RE}[✘]{R} {W}{msg}{R}")
-def warn(msg):print(f"\n  {YL}[!]{R} {W}{msg}{R}")
-def info(msg):print(f"\n  {CY}[i]{R} {W}{msg}{R}")
+def ok(msg):   print(f"\n  {GR}[✔]{R} {W}{msg}{R}")
+def err(msg):  print(f"\n  {RE}[✘]{R} {W}{msg}{R}")
+def warn(msg): print(f"\n  {YL}[!]{R} {W}{msg}{R}")
+def info(msg): print(f"\n  {CY}[i]{R} {W}{msg}{R}")
+
+def prompt(label, c=YL):
+    return input(f"\n  {c}  {label}:{R} ").strip()
+
+def choose(c=CY):
+    return input(f"\n  {c}▶{R} ").strip()
 
 def norm_phone(n):
-    n = n.strip().replace(" ","").replace("-","").replace("(","").replace(")","")
+    n = n.strip()
+    for ch in [" ", "-", "(", ")", ".", "\t"]:
+        n = n.replace(ch, "")
     if n and not n.startswith("+"):
         n = "+" + n
     return n
 
 def valid_ip(ip):
-    parts = ip.split(".")
-    return (len(parts) == 4 and
-            all(p.isdigit() and 0 <= int(p) <= 255 for p in parts))
+    p = ip.split(".")
+    return len(p) == 4 and all(x.isdigit() and 0 <= int(x) <= 255 for x in p)
 
-def prompt(label, c=CY):
-    return input(f"  {c}  {label}:{R} ").strip()
-
-def choose(c=CY):
-    return input(f"\n  {c}▶{R} ").strip()
+def pip_install(pkg):
+    """Install a pip package, trying multiple strategies."""
+    r = os.system(
+        f"python3 -m pip install {pkg} -q --break-system-packages 2>/dev/null"
+        f" || python3 -m pip install {pkg} -q 2>/dev/null"
+        f" || pip install {pkg} -q --break-system-packages 2>/dev/null"
+        f" || pip3 install {pkg} -q 2>/dev/null"
+    )
+    return r == 0
 
 
 # ─────────────────────────────────────────────────────────────
-#  PHONEINFOGA DETECTION
-#  Searches all common install locations so the "not installed"
-#  bug never triggers if the user already has it.
+#  PHONEINFOGA DETECTION  (robust recursive search)
+#
+#  After install via phoneinfoga.sh the repo self-clones, so
+#  the script may be nested: ~/PhoneInfoga/PhoneInfoga/phoneinfoga.py
+#  We do a proper recursive find to handle all cases.
 # ─────────────────────────────────────────────────────────────
-_PIF_SEARCH_DIRS = [
-    os.path.expanduser("~"),          # ~/PhoneInfoga/phoneinfoga.py
-    os.path.expanduser("~/storage"),  # Termux external storage
-    "/opt",                           # Linux system installs
-    "/usr/local",
-    os.getcwd(),                      # current working directory
-]
-_PIF_DIRNAME = "PhoneInfoga"
-_PIF_SCRIPT  = "phoneinfoga.py"
-
 def find_phoneinfoga():
     """
-    Return the full path to phoneinfoga.py if found anywhere,
-    or None if not installed.  Checks PATH first (in case it's
-    a system-wide install), then all search dirs.
+    Return (python_binary, script_path) tuple, or None if not found.
+    Handles:
+      - System PATH command  →  ("phoneinfoga", None)
+      - ~/PhoneInfoga/phoneinfoga.py
+      - ~/PhoneInfoga/PhoneInfoga/phoneinfoga.py  (nested clone from .sh)
+      - Any subfolder of ~  (in case user cloned elsewhere)
     """
-    # 1. Check if it's on PATH as a command
+    # 1. System-level install
     if shutil.which("phoneinfoga"):
-        return "phoneinfoga"          # callable directly
+        return ("phoneinfoga", None)
 
-    # 2. Search common directories
-    for base in _PIF_SEARCH_DIRS:
-        candidate = os.path.join(base, _PIF_DIRNAME, _PIF_SCRIPT)
-        if os.path.isfile(candidate):
-            return candidate
-
-    # 3. Walk one level deeper in home (handles nested clones)
+    # 2. Recursive search under home directory (max depth 4)
     home = os.path.expanduser("~")
-    try:
-        for entry in os.scandir(home):
-            if entry.is_dir():
-                candidate = os.path.join(entry.path, _PIF_SCRIPT)
-                if os.path.isfile(candidate):
-                    # Verify it looks like PhoneInfoga (contains -n flag)
-                    try:
-                        with open(candidate) as f:
-                            snippet = f.read(512)
-                        if "phoneinfoga" in snippet.lower() or "-n" in snippet:
-                            return candidate
-                    except Exception:
-                        pass
-    except Exception:
-        pass
+    for root, dirs, files in os.walk(home):
+        # Skip hidden dirs, node_modules, etc.
+        dirs[:] = [d for d in dirs if not d.startswith(".") and d != "node_modules"]
+
+        # Stop going too deep
+        depth = root.replace(home, "").count(os.sep)
+        if depth > 4:
+            dirs.clear()
+            continue
+
+        if "phoneinfoga.py" in files:
+            script = os.path.join(root, "phoneinfoga.py")
+            # Quick sanity: verify the file mentions phone/number
+            try:
+                with open(script, "r", errors="ignore") as f:
+                    head = f.read(1024).lower()
+                if "phone" in head or "number" in head or "-n" in head:
+                    # Decide which python to use
+                    py = _best_python(root)
+                    return (py, script)
+            except Exception:
+                pass
 
     return None
 
-def run_phoneinfoga(pif_path, number):
-    """Run PhoneInfoga safely with the correct python interpreter."""
-    if pif_path == "phoneinfoga":
+def _best_python(script_dir):
+    """
+    PhoneInfoga (ExpertAnonymous) uses python2 internally but also
+    works with python3 on most modern Termux builds.
+    Prefer python3, fall back to python.
+    """
+    for candidate in ["python3", "python", "python2"]:
+        if shutil.which(candidate):
+            return candidate
+    return "python3"
+
+def run_phoneinfoga(py, script, number):
+    """Execute PhoneInfoga safely."""
+    if script is None:
+        # System command
         os.system(f"phoneinfoga -n {number}")
     else:
-        os.system(f"python3 \"{pif_path}\" -n {number}")
+        # Run from inside its own directory so relative imports work
+        script_dir = os.path.dirname(script)
+        os.system(f"cd \"{script_dir}\" && {py} \"{os.path.basename(script)}\" -n {number}")
 
 
 # ─────────────────────────────────────────────────────────────
-#  DEPENDENCY HELPERS
-# ─────────────────────────────────────────────────────────────
-def pip_install(pkg, label=None):
-    label = label or pkg
-    print(f"\n  {YL}[~] Installing {label}...{R}")
-    # Try system-packages-allowed first (newer Debian/Ubuntu/Termux)
-    ret = os.system(
-        f"python3 -m pip install {pkg} -q --break-system-packages 2>/dev/null"
-        f" || python3 -m pip install {pkg} -q"
-    )
-    if ret == 0:
-        ok(f"{label} installed successfully.")
-    else:
-        err(f"Failed to install {label}.")
-    return ret == 0
-
-def ensure_phonenumbers():
-    try:
-        import phonenumbers  # noqa
-        return True
-    except ImportError:
-        return pip_install("phonenumbers", "phonenumbers")
-
-
-# ─────────────────────────────────────────────────────────────
-#  TOOL INSTALLERS
+#  INSTALLERS
 # ─────────────────────────────────────────────────────────────
 def install_sherlock():
     print(f"\n  {YL}[~] Installing Sherlock...{R}\n")
     pbar("sherlock-project", 2.0, YL)
-    ret = os.system(
-        "python3 -m pip install sherlock-project -q --break-system-packages 2>/dev/null"
-        " || python3 -m pip install sherlock-project -q"
-    )
-    if ret == 0:
+    if pip_install("sherlock-project"):
         ok("Sherlock installed.")
     else:
-        err("Sherlock install failed.")
+        err("Sherlock install failed. Try: pip install sherlock-project")
     pause()
 
 def install_ip_tracer():
@@ -203,8 +186,8 @@ def install_ip_tracer():
     print(f"\n  {LB}[~] Installing IP-Tracer...{R}\n")
 
     if os.path.isdir(dst):
-        warn("Old IP-Tracer folder found — removing it first.")
-        os.system(f"rm -rf {dst}")
+        warn("Removing old IP-Tracer folder...")
+        os.system(f"rm -rf \"{dst}\"")
 
     steps = [
         ("Cloning repository",
@@ -219,50 +202,73 @@ def install_ip_tracer():
         os.system(cmd)
         time.sleep(0.5)
 
-    found = shutil.which("trace") or shutil.which("ip-tracer")
-    if found:
-        ok("IP-Tracer ready.")
+    if shutil.which("trace") or shutil.which("ip-tracer"):
+        ok("IP-Tracer is ready.")
     else:
-        warn("IP-Tracer installed but 'trace' not in PATH yet.\n"
-             "       Restart your terminal or run:  export PATH=$PATH:~/.local/bin")
+        warn("IP-Tracer installed but may not be in PATH yet.\n"
+             "       Try: export PATH=$PATH:~/.local/bin  or restart terminal.")
     pause()
 
 def install_phoneinfoga():
     home = os.path.expanduser("~")
-    dst  = os.path.join(home, _PIF_DIRNAME)
-    print(f"\n  {PK}[~] Installing PhoneInfoga...{R}\n")
+    dst  = os.path.join(home, "PhoneInfoga")
+    print(f"\n  {PK}[~] Installing PhoneInfoga (ExpertAnonymous)...{R}\n")
 
+    # Wipe existing to avoid nested double-clone issues
     if os.path.isdir(dst):
-        warn("Old PhoneInfoga folder found — removing it first.")
+        warn("Removing old PhoneInfoga folder to ensure clean install...")
         os.system(f"rm -rf \"{dst}\"")
 
+    # Official silent install method from the README
     steps = [
-        ("Cloning repository",
-         f"git clone https://github.com/ExpertAnonymous/PhoneInfoga.git \"{dst}\" -q"),
-        ("Setting permissions",
-         f"chmod 777 \"{dst}\"/* 2>/dev/null; true"),
-        ("Running setup script",
-         f"cd \"{dst}\" && bash phoneinfoga.sh 2>/dev/null; true"),
-        ("Installing phonenumbers lib",
+        ("Updating package list",
+         "apt update -y 2>/dev/null || pkg update -y 2>/dev/null; true"),
+        ("Installing wget",
+         "apt install -y wget 2>/dev/null || pkg install -y wget 2>/dev/null; true"),
+        ("Downloading install script",
+         f"cd \"{home}\" && wget -q https://raw.githubusercontent.com/ExpertAnonymous/PhoneInfoga/master/phoneinfoga.sh -O phoneinfoga_setup.sh"),
+        ("Running install script",
+         f"cd \"{home}\" && bash phoneinfoga_setup.sh 2>&1"),
+        ("Installing phonenumbers (python lib)",
          "python3 -m pip install phonenumbers -q --break-system-packages 2>/dev/null"
          " || python3 -m pip install phonenumbers -q"),
+        ("Cleaning up",
+         f"rm -f \"{home}/phoneinfoga_setup.sh\" 2>/dev/null; true"),
     ]
+
     for i, (lbl, cmd) in enumerate(steps, 1):
         print(f"  {PK}[{i}/{len(steps)}]{R} {lbl}...")
         os.system(cmd)
         time.sleep(0.5)
 
-    found = find_phoneinfoga()
-    if found:
-        ok(f"PhoneInfoga ready →  {found}")
+    result = find_phoneinfoga()
+    if result:
+        py, path = result
+        ok(f"PhoneInfoga is ready!")
+        info(f"Found at: {path or 'system PATH'}")
+        info(f"Interpreter: {py}")
     else:
-        err("phoneinfoga.py not found after install. Check your connection and retry.")
+        err("Could not locate phoneinfoga.py after install.")
+        warn("Try running manually:\n"
+             "       git clone https://github.com/ExpertAnonymous/PhoneInfoga ~/PhoneInfoga\n"
+             "       cd ~/PhoneInfoga && chmod 777 * && bash phoneinfoga.sh")
     pause()
 
 
 # ─────────────────────────────────────────────────────────────
-#  PHONE QUICK PARSE  (offline · phonenumbers library)
+#  PHONE QUICK PARSE  (offline, phonenumbers lib)
 # ─────────────────────────────────────────────────────────────
+def ensure_phonenumbers():
+    try:
+        import phonenumbers  # noqa
+        return True
+    except ImportError:
+        print(f"\n  {YL}[~] Installing phonenumbers library...{R}")
+        if pip_install("phonenumbers"):
+            ok("phonenumbers installed.")
+            return True
+        return False
+
 def phone_parse(number):
     if not ensure_phonenumbers():
         return None
@@ -296,41 +302,69 @@ def phone_parse(number):
             "line_type": TYPE_MAP.get(number_type(p), "❓ Unknown"),
             "timezones": tzs,
         }
-    except Exception:
-        return {"valid": False}
+    except Exception as e:
+        return {"valid": False, "error": str(e)}
 
-def show_phone_info(info, number):
-    if info is None:
-        warn("phonenumbers library unavailable — skipping quick parse.")
+def show_phone_info(info_dict, number):
+    if info_dict is None:
+        warn("phonenumbers library not available — skipping quick parse.")
         return
 
-    if not info.get("valid"):
+    if not info_dict.get("valid"):
+        detail = info_dict.get("error", "")
         print(f"""
-  {RE}╔══════════════════════════════════════════════════════════╗
-  ║  ✘  INVALID NUMBER                                       ║
-  ║     '{number}'
-  ║     Always include the country code, e.g.  +971501234567 ║
-  ╚══════════════════════════════════════════════════════════╝{R}
+  {RE}╔════════════════════════════════════════════════════════════╗
+  ║  ✘  INVALID NUMBER                                         ║
+  ║     {number:<58}║
+  ║     Include the country code, e.g.  +971501234567          ║{f'''
+  ║     Detail: {detail:<50}║''' if detail else ''}
+  ╚════════════════════════════════════════════════════════════╝{R}
 """)
         return
 
-    tz = ", ".join(info["timezones"]) if info["timezones"] else "Unknown"
-    # Truncate timezone string if too long
-    tz = tz[:50] + "…" if len(tz) > 50 else tz
+    tz = ", ".join(info_dict["timezones"]) if info_dict["timezones"] else "Unknown"
+    if len(tz) > 52:
+        tz = tz[:49] + "..."
 
     print(f"""
-  {K}╔══════════════════════════════════════════════════════════╗{R}
-  {K}║{R}{BD}{PK}           📱  QUICK PARSE RESULTS                      {R}{K}║{R}
-  {K}╠══════════════════════════════════════════════════════════╣{R}""")
-    row("E.164",         info["e164"],      lc=K, vc=GD)
-    row("International", info["intl"],      lc=K, vc=W)
-    row("National",      info["natl"],      lc=K, vc=W)
-    row("Country Code",  info["cc"],        lc=K, vc=LG)
-    row("Region",        info["region"],    lc=K, vc=CY)
-    row("Carrier",       info["carrier"],   lc=K, vc=YL)
-    row("Line Type",     info["line_type"], lc=K, vc=W)
-    row("Timezone(s)",   tz,                lc=K, vc=LB)
-    print(f"  {K}╚══════════════════════════════════════════════════════════╝{R}")
+  {K}╔════════════════════════════════════════════════════════════╗{R}
+  {K}║{R}{BD}{PK}           📱  QUICK PARSE RESULTS                        {R}{K}║{R}
+  {K}╠════════════════════════════════════════════════════════════╣{R}""")
+    row("E.164",          info_dict["e164"],      lc=K, vc=GD)
+    row("International",  info_dict["intl"],      lc=K, vc=W)
+    row("National",       info_dict["natl"],      lc=K, vc=W)
+    row("Country Code",   info_dict["cc"],        lc=K, vc=LG)
+    row("Region",         info_dict["region"],    lc=K, vc=CY)
+    row("Carrier",        info_dict["carrier"],   lc=K, vc=YL)
+    row("Line Type",      info_dict["line_type"], lc=K, vc=W)
+    row("Timezone(s)",    tz,                     lc=K, vc=LB)
+    print(f"  {K}╚════════════════════════════════════════════════════════════╝{R}")
+
+
+# ─────────────────────────────────────────────────────────────
+#  MENU HELPERS
+# ─────────────────────────────────────────────────────────────
+_MW = 60  # menu width
+
+def menu_top(title, c=K):
+    print(f"  {c}╔{'═'*_MW}╗{R}")
+    pad = (_MW - len(title)) // 2
+    print(f"  {c}║{R}{' '*pad}{BD}{W}{title}{R}{' '*(_MW - pad - len(title))}{c}║{R}")
+    print(f"  {c}╠{'═'*_MW}╣{R}")
+
+def menu_item(key, icon, label, kc=GR, note=""):
+    note_str = f"  {DIM}{note}{R}" if note else ""
+    line = f"   {kc}[{key}]{R}  {icon}  {W}{label}{R}{note_str}"
+    # pad to fill box
+    visible = len(f"   [{key}]  {icon}  {label}" + (f"  {note}" if note else ""))
+    pad = max(0, _MW - 1 - visible)
+    print(f"  {K}║{R}{line}{' '*pad}{K}║{R}")
+
+def menu_sep(c=K):
+    print(f"  {c}║{' '*_MW}║{R}")
+
+def menu_bot(c=K):
+    print(f"  {c}╚{'═'*_MW}╝{R}\n")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -340,14 +374,14 @@ def logo_main():
     print(f"""{RE}
   ████████╗ ██████╗  ██████╗ ██╗     ███████╗
   ╚══██╔══╝██╔═══██╗██╔═══██╗██║     ╚══███╔╝
-     ██║   ██║   ██║██║   ██║██║       ███╔╝ 
-     ██║   ██║   ██║██║   ██║██║      ███╔╝  
+     ██║   ██║   ██║██║   ██║██║       ███╔╝
+     ██║   ██║   ██║██║   ██║██║      ███╔╝
      ██║   ╚██████╔╝╚██████╔╝███████╗███████╗
      ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝{R}
-{K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
-{OR}        ☠   A D V A N C E D   T O O L K I T   ☠{R}
-{K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
-{DIM}        github.com/00xk/Toolz  │  v6.0  │  Linux & Termux{R}
+{K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
+{OR}         ☠   A D V A N C E D   T O O L K I T   ☠{R}
+{K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
+{DIM}    github.com/00xk/Toolz  │  v7.0  │  Linux & Termux{R}
 """)
 
 def logo_sherlock():
@@ -374,14 +408,14 @@ def logo_sherlock():
 {P}             ##***********-.................:-           {R}
 {P}            ########******+.................:+           {R}
 {P}           ############***+.................:#**         {R}
-{P}         #################-...............::: {R}{P}#**          {R}
-{P}        ###################*-.............:   {R}{P}****{R} {A}*******  {R}
-{P}        %%%%%%###############*-:::........:   {R}{P}****{R} {A}******#  {R}
-{P}             @@%%%%#############%*+::::::::   {R}{P}****{R} {A}******#  {R}
-{P}                  %%%%%##########%%##         {R}{P}***********#{R}
-{P}                      @%%%########%%#%        {R}{P}#**********#{R}
-{P}                         @@%%%#####%%%        {R}{P}%###******#%{R}
-{P}                             @%%####%%#          {R}{P}%######   {R}
+{P}         #################-...............::: {P}#**          {R}
+{P}        ###################*-.............:   {P}****{R} {A}*******  {R}
+{P}        %%%%%%###############*-:::........:   {P}****{R} {A}******#  {R}
+{P}             @@%%%%#############%*+::::::::   {P}****{R} {A}******#  {R}
+{P}                  %%%%%##########%%##         {P}***********#{R}
+{P}                      @%%%########%%#%        {P}#**********#{R}
+{P}                         @@%%%#####%%%        {P}%###******#%{R}
+{P}                             @%%####%%#          {P}%######   {R}
 {P}                                %%%#%%%#                   {R}
 {P}                                  @%%@@%                   {R}
 {P}                                    @@                     {R}
@@ -391,7 +425,7 @@ def logo_sherlock():
   ║       "When you eliminate the impossible..."         ║
   ╚════════════════════════════════════════════════════════╝{R}
 {K}  ┌────────────────────────────────────────────────────────┐{R}
-{GR}  │{W}   ✦ 400+ platforms   ✦ Batch mode   ✦ Export to file  {GR}│{R}
+{GR}  │{W}   ✦ 400+ platforms   ✦ Batch mode   ✦ Save to file    {GR}│{R}
 {K}  └────────────────────────────────────────────────────────┘{R}
 """)
 
@@ -404,54 +438,35 @@ def logo_ip():
   ██║██║            ██║   ██║  ██║██║  ██║╚██████╗███████╗██║  ██║
   ╚═╝╚═╝            ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝{R}
 {K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
-{LB}              🌐  IP GEOLOCATION & TRACE ENGINE{R}
+{LB}               🌐  IP GEOLOCATION & TRACE ENGINE{R}
 {K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
-{K}  ┌────────────────────────────────────────────────────────────┐{R}
-{LG}  │{W}   ✦ Country · City · ISP · ASN · Lat/Lon · Timezone      {LG}│{R}
-{K}  └────────────────────────────────────────────────────────────┘{R}
+{K}  ┌──────────────────────────────────────────────────────────────┐{R}
+{LG}  │{W}   ✦ Country · City · ISP · ASN  ✦  Lat/Lon · Timezone      {LG}│{R}
+{K}  └──────────────────────────────────────────────────────────────┘{R}
 """)
 
 def logo_phone():
     print(f"""
 {PK}  ██████╗ ██╗  ██╗ ██████╗ ███╗   ██╗███████╗
   ██╔══██╗██║  ██║██╔═══██╗████╗  ██║██╔════╝
-  ██████╔╝███████║██║   ██║██╔██╗ ██║█████╗  
-  ██╔═══╝ ██╔══██║██║   ██║██║╚██╗██║██╔══╝  
+  ██████╔╝███████║██║   ██║██╔██╗ ██║█████╗
+  ██╔═══╝ ██╔══██║██║   ██║██║╚██╗██║██╔══╝
   ██║     ██║  ██║╚██████╔╝██║ ╚████║███████╗
   ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝{R}
 {PK}  ██████╗  ██████╗ ██╗███╗   ██╗████████╗
   ██╔══██╗██╔═══██╗██║████╗  ██║╚══██╔══╝
-  ██████╔╝██║   ██║██║██╔██╗ ██║   ██║   
-  ██╔═══╝ ██║   ██║██║██║╚██╗██║   ██║   
-  ██║     ╚██████╔╝██║██║ ╚████║   ██║   
+  ██████╔╝██║   ██║██║██╔██╗ ██║   ██║
+  ██╔═══╝ ██║   ██║██║██║╚██╗██║   ██║
+  ██║     ╚██████╔╝██║██║ ╚████║   ██║
   ╚═╝      ╚═════╝ ╚═╝╚═╝  ╚═══╝   ╚═╝  {R}
 {K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
 {PK}            📱  MOBILE NUMBER OSINT ENGINE{R}
 {K}  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}
-{K}  ┌────────────────────────────────────────────────────────────┐{R}
-{PK}  │{W}   ✦ Carrier · Region · Line type  ✦ Validity check        {PK}│{R}
-{PK}  │{W}   ✦ PhoneInfoga deep OSINT scan  (all countries)          {PK}│{R}
-{K}  └────────────────────────────────────────────────────────────┘{R}
+{K}  ┌──────────────────────────────────────────────────────────────┐{R}
+{PK}  │{W}   ✦ Carrier · Region · Line type  ✦  Timezone              {PK}│{R}
+{PK}  │{W}   ✦ PhoneInfoga deep OSINT engine (all countries)          {PK}│{R}
+{K}  └──────────────────────────────────────────────────────────────┘{R}
 """)
-
-
-# ─────────────────────────────────────────────────────────────
-#  MENU HELPERS
-# ─────────────────────────────────────────────────────────────
-def menu_header(title):
-    print(f"{K}  ╔════════════════════════════════════════════════════════╗{R}")
-    pad = (56 - len(title)) // 2
-    print(f"  {K}║{R}{' '*pad}{BD}{W}{title}{R}{' '*(56-pad-len(title))}{K}║{R}")
-    print(f"{K}  ╠════════════════════════════════════════════════════════╣{R}")
-
-def menu_item(key, icon, label, kc=GR):
-    print(f"  {K}║{R}   {kc}[{key}]{R}  {icon}  {W}{label:<46}{K}║{R}")
-
-def menu_gap():
-    print(f"  {K}║{R}{' '*58}{K}║{R}")
-
-def menu_footer():
-    print(f"  {K}╚════════════════════════════════════════════════════════╝{R}\n")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -459,8 +474,7 @@ def menu_footer():
 # ─────────────────────────────────────────────────────────────
 def mod_sherlock():
     if not shutil.which("sherlock"):
-        warn("Sherlock is not installed.")
-        print(f"  {DIM}Installing automatically...{R}\n")
+        warn("Sherlock not installed — installing now...")
         install_sherlock()
         if not shutil.which("sherlock"):
             err("Installation failed. Returning to main menu.")
@@ -468,55 +482,48 @@ def mod_sherlock():
 
     while True:
         clr(); logo_sherlock()
-        menu_header("SHERLOCK — USERNAME HUNT")
+        menu_top("SHERLOCK  —  USERNAME HUNT", PU)
         menu_item("1", "🔍", "Single username scan")
         menu_item("2", "📂", "Batch scan from file")
         menu_item("3", "💾", "Scan and save results to file")
-        menu_gap()
-        menu_item("0", "✖ ", "Back to main menu", kc=RE)
-        menu_footer()
+        menu_sep()
+        menu_item("0", "✖ ", "Back", kc=RE)
+        menu_bot()
         ch = choose(PU)
 
         if ch == "1":
-            u = prompt("Target username", YL)
+            u = prompt("Target username")
             if not u: continue
-
-            section("Target Info", PU)
-            print(f"  {K}┌────────────────────────────────────────────────────┐{R}")
-            print(f"  {K}│{R}  {DIM}Username :{R}  {YL}{u}{R}")
-            print(f"  {K}│{R}  {DIM}Engine   :{R}  {W}Sherlock  ·  400+ platforms{R}")
-            print(f"  {K}└────────────────────────────────────────────────────┘{R}")
+            section(f"Scanning → {u}", PU)
+            print(f"  {K}┌──────────────────────────────────────────────────────┐{R}")
+            print(f"  {K}│{R}  {DIM}Username  :{R}  {YL}{u}{R}")
+            print(f"  {K}│{R}  {DIM}Engine    :{R}  {W}Sherlock  ·  400+ platforms{R}")
+            print(f"  {K}└──────────────────────────────────────────────────────┘{R}")
             spinner("Initializing scan", 1.0, PU)
             print(); ln(PU); print()
             os.system(f"sherlock \"{u}\"")
-            print(); ln(PU)
-            pause()
+            print(); ln(PU); pause()
 
         elif ch == "2":
-            path = prompt("File path (one username per line)", YL)
+            path = prompt("File path (one username per line)")
             if not path: continue
             if not os.path.isfile(path):
                 err(f"File not found: {path}"); pause(); continue
-
             with open(path) as f:
                 users = [l.strip() for l in f if l.strip()]
-
             if not users:
                 warn("File is empty."); pause(); continue
-
-            info(f"Loaded {len(users)} username(s).")
-            time.sleep(0.6)
-
+            info(f"Loaded {len(users)} username(s) — starting batch scan...")
+            time.sleep(0.8)
             for i, u in enumerate(users, 1):
-                section(f"Target {i}/{len(users)} → {u}", PU)
+                section(f"Target {i}/{len(users)}  →  {u}", PU)
                 os.system(f"sherlock \"{u}\"")
                 print()
-
-            ok(f"Batch scan complete — {len(users)} target(s) processed.")
+            ok(f"Batch complete — {len(users)} target(s) scanned.")
             pause()
 
         elif ch == "3":
-            u = prompt("Username to scan", YL)
+            u = prompt("Username to scan")
             if not u: continue
             out = f"{u}_sherlock.txt"
             spinner(f"Scanning & saving to {out}", 1.5, PU)
@@ -538,8 +545,7 @@ def get_ip_cmd():
 
 def mod_ip():
     if not get_ip_cmd():
-        warn("IP-Tracer is not installed.")
-        print(f"  {DIM}Installing automatically...{R}\n")
+        warn("IP-Tracer not installed — installing now...")
         install_ip_tracer()
         if not get_ip_cmd():
             err("Installation failed. Try restarting your terminal.")
@@ -548,63 +554,57 @@ def mod_ip():
     while True:
         clr(); logo_ip()
         cmd = get_ip_cmd()
-
-        menu_header("IP-TRACER — GEOLOCATION")
+        menu_top("IP-TRACER  —  GEOLOCATION", LB)
         menu_item("1", "🏠", "Trace my own IP address")
         menu_item("2", "🎯", "Trace a target IP address")
-        menu_item("3", "📂", "Batch trace from file")
-        menu_gap()
-        menu_item("0", "✖ ", "Back to main menu", kc=RE)
-        menu_footer()
+        menu_item("3", "📂", "Batch trace IPs from file")
+        menu_sep()
+        menu_item("0", "✖ ", "Back", kc=RE)
+        menu_bot()
         ch = choose(LB)
 
         if ch == "1":
-            spinner("Fetching your IP info", 1.2, LB)
+            spinner("Fetching your public IP info", 1.2, LB)
             print(); ln(LB); print()
             os.system(f"{cmd} -m")
             print(); ln(LB); pause()
 
         elif ch == "2":
-            ip = prompt("Target IP address", YL)
+            ip = prompt("Target IP address")
             if not ip: continue
-
             if not valid_ip(ip):
-                err("Invalid IP format. Use: xxx.xxx.xxx.xxx"); pause(); continue
-
-            section("Target Info", LB)
-            print(f"  {K}┌────────────────────────────────────────────────────┐{R}")
-            print(f"  {K}│{R}  {DIM}Target :{R}  {YL}{ip}{R}")
-            print(f"  {K}│{R}  {DIM}Engine :{R}  {W}IP-Tracer via ip-api.com{R}")
-            print(f"  {K}└────────────────────────────────────────────────────┘{R}")
+                err("Invalid IP format. Use:  xxx.xxx.xxx.xxx"); pause(); continue
+            section(f"Tracing → {ip}", LB)
+            print(f"  {K}┌──────────────────────────────────────────────────────┐{R}")
+            print(f"  {K}│{R}  {DIM}Target    :{R}  {YL}{ip}{R}")
+            print(f"  {K}│{R}  {DIM}Engine    :{R}  {W}IP-Tracer via ip-api.com{R}")
+            print(f"  {K}└──────────────────────────────────────────────────────┘{R}")
             spinner(f"Tracing {ip}", 1.5, LB)
             print(); ln(LB); print()
             os.system(f"{cmd} -t {ip}")
             print(); ln(LB); pause()
 
         elif ch == "3":
-            path = prompt("File path (one IP per line)", YL)
+            path = prompt("File path (one IP per line)")
             if not path: continue
             if not os.path.isfile(path):
                 err(f"File not found: {path}"); pause(); continue
-
             with open(path) as f:
                 ips = [l.strip() for l in f if l.strip()]
-
             if not ips:
                 warn("File is empty."); pause(); continue
-
-            info(f"Loaded {len(ips)} IP address(es).")
-            time.sleep(0.5)
-
+            info(f"Loaded {len(ips)} IP address(es) — starting batch trace...")
+            time.sleep(0.6)
+            skipped = 0
             for i, ip in enumerate(ips, 1):
-                section(f"Target {i}/{len(ips)} → {ip}", LB)
                 if not valid_ip(ip):
-                    warn(f"Skipping invalid IP: {ip}")
+                    warn(f"Skipping invalid entry: {ip}")
+                    skipped += 1
                     continue
+                section(f"Target {i}/{len(ips)}  →  {ip}", LB)
                 os.system(f"{cmd} -t {ip}")
                 print(); time.sleep(0.4)
-
-            ok(f"Batch trace complete — {len(ips)} address(es) processed.")
+            ok(f"Batch complete — {len(ips)-skipped} traced, {skipped} skipped.")
             pause()
 
         elif ch == "0":
@@ -616,123 +616,122 @@ def mod_ip():
 # ─────────────────────────────────────────────────────────────
 #  MODULE: PHONE OSINT
 # ─────────────────────────────────────────────────────────────
+def _pif_status_line():
+    """Return a colored status string for PhoneInfoga."""
+    result = find_phoneinfoga()
+    if result:
+        py, path = result
+        loc = path if path else "system PATH"
+        return f"{GR}[✔] Installed{R}  {DIM}{loc}{R}", result
+    return f"{RE}[✘] Not installed  — use option [5] to install{R}", None
+
 def mod_phone():
     while True:
         clr(); logo_phone()
 
-        # Re-detect PhoneInfoga on EVERY loop iteration so install
-        # status is always fresh and never stale.
-        pif_path = find_phoneinfoga()
-        pif_ok   = pif_path is not None
+        # Always re-detect on every loop so status is live
+        status_str, pif_result = _pif_status_line()
+        pif_ok = pif_result is not None
 
-        if pif_ok:
-            pif_label = f"{GR}Installed{R}  {DIM}({pif_path}){R}"
-        else:
-            pif_label = f"{RE}Not installed{R}  {DIM}— use option [4] to install{R}"
+        print(f"  {K}┌─  PhoneInfoga Status {'─'*38}┐{R}")
+        print(f"  {K}│{R}  {status_str}")
+        print(f"  {K}└{'─'*59}┘{R}")
 
-        section("PhoneInfoga Status", PK)
-        print(f"  {K}│{R}  {pif_label}\n")
-
-        menu_header("PHONE OSINT — NUMBER INTEL")
-        menu_item("1", "⚡", "Quick scan     (offline · instant)")
-        menu_item("2", "🔬", "Deep scan      (PhoneInfoga · full OSINT)")
-        menu_item("3", "🔭", "Full scan      (quick + deep combined)")
-        menu_item("4", "📂", "Batch scan     (file of numbers)")
-        menu_gap()
+        menu_top("PHONE OSINT  —  NUMBER INTELLIGENCE", PK)
+        menu_item("1", "⚡", "Quick scan    (offline · instant results)")
+        menu_item("2", "🔬", "Deep scan     (PhoneInfoga · full OSINT)")
+        menu_item("3", "🔭", "Full scan     (quick + deep combined)")
+        menu_item("4", "📂", "Batch scan    (file of numbers)")
+        menu_sep()
         menu_item("5", "⚙ ", "Install / Reinstall PhoneInfoga", kc=GD)
-        menu_item("0", "✖ ", "Back to main menu", kc=RE)
-        menu_footer()
+        menu_item("0", "✖ ", "Back", kc=RE)
+        menu_bot()
         ch = choose(PK)
 
-        # ── 1. Quick scan (offline) ──────────────────────────
+        # ── 1. Quick scan ────────────────────────────────────
         if ch == "1":
-            n = norm_phone(prompt("Phone number  e.g. +971501234567", YL))
+            n = norm_phone(prompt("Phone number  e.g. +971501234567"))
             if not n: continue
-            spinner("Parsing number", 0.8, PK)
+            spinner("Parsing number offline", 0.8, PK)
             show_phone_info(phone_parse(n), n)
             pause()
 
-        # ── 2. Deep scan (PhoneInfoga) ───────────────────────
+        # ── 2. Deep scan ─────────────────────────────────────
         elif ch == "2":
             if not pif_ok:
                 err("PhoneInfoga is not installed.")
-                warn("Use option [5] to install it.")
+                warn("Select option [5] to install it.")
                 pause(); continue
 
-            n = norm_phone(prompt("Phone number  e.g. +971501234567", YL))
+            n = norm_phone(prompt("Phone number  e.g. +971501234567"))
             if not n: continue
 
-            section("Deep Scan Target", PK)
-            print(f"  {K}┌────────────────────────────────────────────────────┐{R}")
-            print(f"  {K}│{R}  {DIM}Number :{R}  {GD}{n}{R}")
-            print(f"  {K}│{R}  {DIM}Engine :{R}  {W}PhoneInfoga · search fingerprinting{R}")
-            print(f"  {K}│{R}  {DIM}Path   :{R}  {DIM}{pif_path}{R}")
-            print(f"  {K}└────────────────────────────────────────────────────┘{R}")
-
-            spinner("Launching PhoneInfoga", 1.5, PK)
+            py, script = pif_result
+            section(f"Deep Scan  →  {n}", PK)
+            print(f"  {K}┌──────────────────────────────────────────────────────┐{R}")
+            print(f"  {K}│{R}  {DIM}Number    :{R}  {GD}{n}{R}")
+            print(f"  {K}│{R}  {DIM}Engine    :{R}  {W}PhoneInfoga · search fingerprinting{R}")
+            print(f"  {K}│{R}  {DIM}Interpret :{R}  {DIM}{py}{R}")
+            print(f"  {K}│{R}  {DIM}Script    :{R}  {DIM}{script or 'system PATH'}{R}")
+            print(f"  {K}└──────────────────────────────────────────────────────┘{R}")
+            spinner("Launching PhoneInfoga deep scan", 1.5, PK)
             print(); ln(PK); print()
-            run_phoneinfoga(pif_path, n)
+            run_phoneinfoga(py, script, n)
             print(); ln(PK); pause()
 
-        # ── 3. Full scan (quick + deep) ──────────────────────
+        # ── 3. Full scan ─────────────────────────────────────
         elif ch == "3":
-            n = norm_phone(prompt("Phone number  e.g. +971501234567", YL))
+            n = norm_phone(prompt("Phone number  e.g. +971501234567"))
             if not n: continue
 
-            section("Phase 1 · Quick Parse  (offline)", PK)
+            section("Phase 1  —  Quick Parse  (offline)", PK)
             spinner("Parsing number", 0.8, PK)
             parsed = phone_parse(n)
             show_phone_info(parsed, n)
 
             if parsed and not parsed.get("valid"):
-                err("Invalid number — cannot continue."); pause(); continue
+                err("Invalid number — aborting full scan."); pause(); continue
 
             if pif_ok:
-                section("Phase 2 · PhoneInfoga Deep Scan", PK)
+                py, script = pif_result
+                section("Phase 2  —  PhoneInfoga Deep Scan", PK)
                 spinner("Launching PhoneInfoga", 1.2, PK)
                 print(); ln(PK); print()
-                run_phoneinfoga(pif_path, n)
+                run_phoneinfoga(py, script, n)
                 print(); ln(PK)
             else:
-                warn("PhoneInfoga not installed — skipping deep scan.")
+                warn("PhoneInfoga not installed — Phase 2 skipped.")
                 info("Use option [5] to install PhoneInfoga.")
 
             pause()
 
-        # ── 4. Batch scan ────────────────────────────────────
+        # ── 4. Batch ─────────────────────────────────────────
         elif ch == "4":
-            path = prompt("File path  (one number per line)", YL)
+            path = prompt("File path  (one number per line)")
             if not path: continue
             if not os.path.isfile(path):
                 err(f"File not found: {path}"); pause(); continue
-
             with open(path) as f:
                 nums = [norm_phone(l) for l in f if l.strip()]
-
             if not nums:
                 warn("File is empty."); pause(); continue
-
-            info(f"Loaded {len(nums)} number(s).")
-            time.sleep(0.5)
-
+            info(f"Loaded {len(nums)} number(s) — starting batch scan...")
+            time.sleep(0.6)
             for i, n in enumerate(nums, 1):
-                section(f"Target {i}/{len(nums)} → {n}", PK)
+                section(f"Target {i}/{len(nums)}  →  {n}", PK)
                 parsed = phone_parse(n)
                 show_phone_info(parsed, n)
-
                 if pif_ok and parsed and parsed.get("valid"):
-                    print(f"  {DIM}Running deep scan...{R}\n")
-                    run_phoneinfoga(pif_path, n)
-
+                    py, script = pif_result
+                    print(f"\n  {DIM}Running PhoneInfoga deep scan...{R}\n")
+                    run_phoneinfoga(py, script, n)
                 ln(PK); print(); time.sleep(0.3)
-
-            ok(f"Batch scan complete — {len(nums)} number(s) processed.")
+            ok(f"Batch complete — {len(nums)} number(s) processed.")
             pause()
 
-        # ── 5. Install PhoneInfoga ───────────────────────────
+        # ── 5. Install ───────────────────────────────────────
         elif ch == "5":
             install_phoneinfoga()
-            # Loop back — find_phoneinfoga() will re-detect on next iteration
 
         elif ch == "0":
             break
@@ -756,16 +755,13 @@ def mod_update():
     steps = [
         (f"  {YL}[1/3] Removing old installation...{R}",
          lambda: os.system(f"rm -rf \"{tool_dir}\"") if os.path.isdir(tool_dir) else None),
-        (f"  {CY}[2/3] Pulling latest version from GitHub...{R}",
+        (f"  {CY}[2/3] Pulling latest from GitHub...{R}",
          lambda: os.system(f"cd \"{home}\" && git clone https://github.com/00xk/Toolz.git -q")),
         (f"  {GR}[3/3] Finalizing...{R}",
          lambda: time.sleep(0.5)),
     ]
-
     for msg, fn in steps:
-        print(msg)
-        fn()
-        time.sleep(0.8)
+        print(msg); fn(); time.sleep(0.8)
 
     ok("Toolz updated to the latest version!")
     time.sleep(1.5)
@@ -774,22 +770,21 @@ def mod_update():
 
 
 # ─────────────────────────────────────────────────────────────
-#  MAIN MENU
+#  MAIN
 # ─────────────────────────────────────────────────────────────
 def main():
     while True:
         clr()
         logo_main()
-
-        menu_header("M A I N   M E N U")
-        menu_gap()
-        menu_item("1", "🔍", "Sherlock OSINT   —  Username Hunt")
-        menu_item("2", "🌐", "IP Tracer        —  Geolocation")
-        menu_item("3", "📱", "Phone OSINT      —  Number Intelligence")
-        menu_item("4", "🔄", "Update Tool      —  Pull Latest")
-        menu_gap()
+        menu_top("M A I N   M E N U")
+        menu_sep()
+        menu_item("1", "🔍", "Sherlock OSINT    —  Username Hunt",         kc=PU)
+        menu_item("2", "🌐", "IP Tracer         —  Geolocation",           kc=LB)
+        menu_item("3", "📱", "Phone OSINT       —  Number Intelligence",   kc=PK)
+        menu_item("4", "🔄", "Update Tool       —  Pull Latest Version",   kc=GD)
+        menu_sep()
         menu_item("0", "✖ ", "Exit", kc=RE)
-        menu_footer()
+        menu_bot()
 
         ch = choose(CY)
 
